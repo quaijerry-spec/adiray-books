@@ -1,1 +1,1 @@
-style={{ backgroundImage: "url('/logo-background.png')" }}
+<img src="/logo-background.png" alt="AdiRay Books Logo" />
