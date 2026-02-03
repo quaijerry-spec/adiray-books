@@ -1,57 +1,31 @@
 import { useCart } from "../context/CartContext";
 
-export default function Cart() {
-  const { cart, removeFromCart, totalPrice, clearCart } = useCart();
-
-  if (cart.length === 0) {
-    return (
-      <p className="text-center mt-20 text-xl">
-        Your cart is empty 🛒
-      </p>
-    );
-  }
+const Cart = () => {
+  const { cart, removeFromCart } = useCart();
 
   return (
-    <div className="max-w-4xl mx-auto mt-16 p-6">
-      <h2 className="text-3xl font-bold mb-6">Your Cart</h2>
+    <div className="fixed right-4 top-24 bg-white shadow-lg rounded-lg p-4 w-64 z-50">
+      <h2 className="font-bold mb-3">Cart</h2>
 
-      {cart.map((item) => (
-        <div
-          key={item.id}
-          className="flex items-center gap-4 border-b py-4"
-        >
-          <img
-            src={item.image}
-            alt={item.title}
-            className="w-20 h-28 object-cover rounded"
-          />
+      {cart.length === 0 && (
+        <p className="text-sm text-gray-500">Cart is empty</p>
+      )}
 
-          <div className="flex-1">
-            <h3 className="font-semibold">{item.title}</h3>
-            <p>${item.price} × {item.qty}</p>
-          </div>
+      {cart.map((item, index) => (
+        <div key={index} className="mb-2">
+          <p className="text-sm font-medium">{item.title}</p>
+          <p className="text-xs">${item.price}</p>
 
           <button
-            onClick={() => removeFromCart(item.id)}
-            className="text-red-500 font-semibold"
+            onClick={() => removeFromCart(index)}
+            className="text-red-500 text-xs"
           >
             Remove
           </button>
         </div>
       ))}
-
-      <div className="mt-6 text-right">
-        <p className="text-xl font-bold">
-          Total: ${totalPrice}
-        </p>
-
-        <button
-          onClick={clearCart}
-          className="mt-4 bg-black text-white px-6 py-2 rounded-full"
-        >
-          Clear Cart
-        </button>
-      </div>
     </div>
   );
-}
+};
+
+export default Cart;
