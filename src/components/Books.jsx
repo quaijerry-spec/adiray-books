@@ -1,6 +1,6 @@
 import React from "react";
 import books from "../books"; // adjust path if needed
-
+import { useCart } from "../context/CartContext";
 const Books = () => {
   return (
     <div
