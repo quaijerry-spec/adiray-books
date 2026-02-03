@@ -1,5 +1,6 @@
 import Books from "./components/Books";
-
+import Cart from "./components/Cart";
+import { useCart } from "./context/CartContext";
 function App() {
   return (
     <div className="min-h-screen bg-white">
