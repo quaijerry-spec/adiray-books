@@ -1,6 +1,6 @@
-import { useState } from "react";
 import Books from "./components/Books";
 import Cart from "./components/Cart";
+import { useState } from "react";
 import { useCart } from "./context/CartContext";
 
 export default function App() {
@@ -8,7 +8,7 @@ export default function App() {
   const { cart } = useCart();
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div>
       {/* NAVBAR */}
       <nav className="flex justify-between items-center px-6 py-4 bg-gray-800 text-white">
         <h1 className="text-xl font-bold">AdiRay Books</h1>
@@ -26,10 +26,8 @@ export default function App() {
         </button>
       </nav>
 
-      {/* MAIN CONTENT */}
-      <main className="p-6">
-        {showCart ? <Cart /> : <Books />}
-      </main>
+      {/* CONTENT */}
+      {showCart ? <Cart /> : <Books />}
     </div>
   );
 }
