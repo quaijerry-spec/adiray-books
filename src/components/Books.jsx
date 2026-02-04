@@ -1,25 +1,32 @@
 import React from "react";
 import books from "../books";
+import { useCart } from "../context/CartContext";
 
 export default function Books() {
+  const { addToCart } = useCart();
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 overflow-y-auto max-h-[70vh]">
+    <div className="p-6 flex flex-col overflow-y-auto gap-4 max-h-[calc(100vh-64px)]">
       {books.map((book) => (
         <div
           key={book.id}
-          className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center hover:shadow-xl transition-shadow duration-300"
+          className="flex items-center gap-4 bg-white p-4 rounded shadow hover:shadow-lg"
         >
           <img
             src={book.image}
             alt={book.title}
-            className="w-40 h-56 object-cover mb-4"
+            className="w-24 h-36 object-cover"
           />
-          <h2 className="font-semibold text-lg text-center">{book.title}</h2>
-          <p className="mt-2 text-blue-600 font-medium">${book.price}</p>
-          {/* Add to cart button */}
-          <button className="mt-3 bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-full">
-            Add to Cart
-          </button>
+          <div className="flex-1">
+            <h2 className="font-semibold text-lg">{book.title}</h2>
+            <p className="text-blue-600 font-medium">${book.price}</p>
+            <button
+              onClick={() => addToCart(book)}
+              className="mt-2 bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-1 rounded-full"
+            >
+              Add to Cart
+            </button>
+          </div>
         </div>
       ))}
     </div>
