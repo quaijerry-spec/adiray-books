@@ -9,11 +9,17 @@ export default function App() {
   const [search, setSearch] = useState("");
 
   return (
-    <div className="font-sans bg-gray-50 min-h-screen">
-      <Navbar setShowCart={setShowCart} search={search} setSearch={setSearch} />
+    <div className="bg-gray-100 min-h-screen">
+      <Navbar
+        onCartClick={() => setShowCart(true)}
+        onSearch={setSearch}
+      />
+
       <Hero />
-      {showCart && <Cart setShowCart={setShowCart} />}
+
       <Books search={search} />
+
+      {showCart && <Cart onClose={() => setShowCart(false)} />}
     </div>
   );
 }
