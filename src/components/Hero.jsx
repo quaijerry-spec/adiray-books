@@ -1,32 +1,28 @@
-
-
 export default function Hero() {
   return (
     <section
-      className="relative h-[420px] mt-6 rounded-xl overflow-hidden max-w-6xl mx-auto"
+      className="h-[75vh] flex items-center"
       style={{
-  backgroundImage: "url('/hero.jpg')",
-  backgroundSize: "cover",
-  backgroundPosition: "center",
-}}
+        backgroundImage: "url('/hero.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     >
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/60"></div>
+      <div className="bg-black/60 w-full h-full flex items-center">
+        <div className="max-w-6xl px-6 text-white">
+          <h1 className="text-4xl md:text-5xl font-serif font-bold">
+            Read Learn Grow
+          </h1>
 
-      {/* Content */}
-      <div className="relative z-10 h-full flex flex-col justify-center px-10 text-white max-w-xl">
-        <h1 className="text-4xl font-bold mb-4">
-          Read Learn Grow
-        </h1>
+          <p className="mt-4 max-w-lg text-gray-200">
+            Discover your next great read from our curated collection of books
+            on personal development, business, and success.
+          </p>
 
-        <p className="text-gray-200 mb-6">
-          Discover your next great read from our curated collection of books
-          on personal development, business, and success.
-        </p>
-
-        <button className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-6 py-3 rounded-full w-fit">
-          Browse Books
-        </button>
+          <button className="mt-6 bg-yellow-500 hover:bg-yellow-600 text-black px-6 py-3 rounded-full font-semibold">
+            Browse Books
+          </button>
+        </div>
       </div>
     </section>
   );
