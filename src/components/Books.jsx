@@ -14,6 +14,10 @@ export default function Books({ search }) {
         Available Books
       </h2>
 
+      {/* 
+        GRID = books appear horizontally
+        PAGE scrolls vertically naturally
+      */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredBooks.map((book) => (
           <div
@@ -23,7 +27,7 @@ export default function Books({ search }) {
             <img
               src={book.image}
               alt={book.title}
-              className="h-52 w-full object-contain p-4"
+              className="h-48 w-full object-contain p-4"
             />
 
             <div className="px-4 pb-4 flex flex-col flex-1">
