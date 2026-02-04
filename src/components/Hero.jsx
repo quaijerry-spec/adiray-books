@@ -1,10 +1,19 @@
 export default function Hero() {
   return (
-    <div
-      className="h-64 bg-cover bg-center flex items-center justify-center text-white text-4xl font-bold"
+    <section
+      className="h-[320px] bg-cover bg-center relative"
       style={{ backgroundImage: "url(/hero.jpg)" }}
     >
-      Welcome to AdiRay Books
-    </div>
+      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+        <div className="text-center text-white px-4">
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-4">
+            Discover Your Next Book
+          </h2>
+          <p className="text-lg text-gray-200">
+            Hand-picked books for curious minds
+          </p>
+        </div>
+      </div>
+    </section>
   );
 }
