@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Navbar from "./components/Navbar";
+import Hero from "./components/Hero";
 import Books from "./components/Books";
 import Cart from "./components/Cart";
 
@@ -14,9 +15,11 @@ export default function App() {
         onSearch={setSearch}
       />
 
+      {!showCart && <Hero />}
+
       {showCart && <Cart onClose={() => setShowCart(false)} />}
 
-      <Books search={search} />
+      {!showCart && <Books search={search} />}
     </div>
   );
 }
