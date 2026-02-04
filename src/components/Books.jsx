@@ -1,4 +1,4 @@
-import books from "../Books";
+import books from "../books";
 import { useCart } from "../context/CartContext";
 
 export default function Books({ search }) {
