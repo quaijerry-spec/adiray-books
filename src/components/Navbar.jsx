@@ -1,13 +1,16 @@
-import React from "react";
+import { useState } from "react";
 import { useCart } from "../context/CartContext";
-import logo from "../assets/logo.png"; // make sure logo.png exists
 
-export default function Navbar({ showCart, setShowCart }) {
+export default function Navbar() {
+  const [showCart, setShowCart] = useState(false);
   const { cart } = useCart();
 
   return (
-    <nav className="flex justify-between items-center px-6 py-4 bg-gray-800 text-white sticky top-0 z-50">
-      <img src={logo} alt="AdiRay Books" className="h-10" />
+    <nav className="flex justify-between items-center px-6 py-4 bg-gray-800 text-white">
+      {/* Logo */}
+      <img src="/logo.png" alt="AdiRay Books Logo" className="h-12" />
+
+      {/* Cart Button */}
       <button
         onClick={() => setShowCart(!showCart)}
         className="relative text-2xl"
