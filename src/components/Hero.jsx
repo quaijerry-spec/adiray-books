@@ -1,28 +1,38 @@
 export default function Hero() {
   return (
     <section
-      className="h-[75vh] flex items-center"
-      style={{
-        backgroundImage: "url('/hero.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+      className="relative h-[80vh] flex items-center justify-center bg-cover bg-center"
+      style={{ backgroundImage: "url(/hero-bg.png)" }}
     >
-      <div className="bg-black/60 w-full h-full flex items-center">
-        <div className="max-w-6xl px-6 text-white">
-          <h1 className="text-4xl md:text-5xl font-serif font-bold">
-            Read Learn Grow
-          </h1>
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/70"></div>
 
-          <p className="mt-4 max-w-lg text-gray-200">
-            Discover your next great read from our curated collection of books
-            on personal development, business, and success.
-          </p>
+      {/* Content */}
+      <div className="relative z-10 text-center px-6">
+        <img
+          src="/logo.png"
+          alt="AdiRay Books Logo"
+          className="mx-auto mb-6 w-44 drop-shadow-xl"
+        />
 
-          <button className="mt-6 bg-yellow-500 hover:bg-yellow-600 text-black px-6 py-3 rounded-full font-semibold">
-            Browse Books
-          </button>
-        </div>
+        <h1 className="text-4xl md:text-6xl font-extrabold text-yellow-400 tracking-wide">
+          AdiRay Books
+        </h1>
+
+        <p className="mt-4 text-lg md:text-xl text-gray-200 max-w-xl mx-auto">
+          Discover powerful books on growth, mindset, business, and life.
+        </p>
+
+        <button
+          className="mt-8 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-8 py-3 rounded-full transition"
+          onClick={() =>
+            document
+              .getElementById("books-section")
+              ?.scrollIntoView({ behavior: "smooth" })
+          }
+        >
+          Browse Books
+        </button>
       </div>
     </section>
   );
