@@ -1,27 +1,32 @@
 import { useCart } from "../context/CartContext";
 
-export default function Navbar({ toggleCart }) {
+export default function Navbar({ onToggleCart, onSearch }) {
   const { cart } = useCart();
 
   return (
-    <div className="flex justify-center mt-4">
-      <nav className="flex items-center justify-between w-[95%] max-w-6xl bg-gray-600 text-white px-6 py-3 rounded-full shadow-lg">
-        <div className="flex items-center gap-3">
-          <img src="/logo.png" alt="AdiRay Books" className="h-10 w-10" />
-          <span className="font-bold text-lg text-yellow-400">
-            AdiRay Books
-          </span>
-        </div>
+    <nav className="flex items-center justify-between px-6 py-4 bg-[#020617] sticky top-0 z-50">
+      <h1 className="text-2xl font-bold text-yellow-400">
+        AdiRay Books
+      </h1>
 
-        <button onClick={toggleCart} className="relative text-xl">
-          🛒
-          {cart.length > 0 && (
-            <span className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs px-2 rounded-full">
-              {cart.length}
-            </span>
-          )}
-        </button>
-      </nav>
-    </div>
+      <input
+        type="text"
+        placeholder="Search books..."
+        onChange={(e) => onSearch(e.target.value)}
+        className="w-1/2 px-4 py-2 rounded bg-gray-800 text-white outline-none"
+      />
+
+      <button
+        onClick={onToggleCart}
+        className="relative text-2xl"
+      >
+        🛒
+        {cart.length > 0 && (
+          <span className="absolute -top-2 -right-2 bg-yellow-500 text-black text-xs px-2 rounded-full">
+            {cart.length}
+          </span>
+        )}
+      </button>
+    </nav>
   );
 }
