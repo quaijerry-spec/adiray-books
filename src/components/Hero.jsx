@@ -1,14 +1,14 @@
-import hero from "../assets/hero.jpg";
+
 
 export default function Hero() {
   return (
     <section
       className="relative h-[420px] mt-6 rounded-xl overflow-hidden max-w-6xl mx-auto"
       style={{
-        backgroundImage: `url(${hero})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+  backgroundImage: "url('/hero.jpg')",
+  backgroundSize: "cover",
+  backgroundPosition: "center",
+}}
     >
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-black/60"></div>
