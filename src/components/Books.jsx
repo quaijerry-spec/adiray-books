@@ -68,7 +68,9 @@ export default function Books() {
               <img src={book.image} alt={book.title} />
               <h3>{book.title}</h3>
               <p className="price">${book.price}</p>
-              <button>Add to Cart</button>
+             <button onClick={() => addToCart(book)}>
+  Add to Cart
+</button> 
             </div>
           ))
         )}
