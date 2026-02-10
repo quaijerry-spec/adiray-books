@@ -1,0 +1,37 @@
+.cart-page {
+  padding: 2rem;
+}
+
+.cart-item {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 1rem;
+}
+
+.cart-item img {
+  width: 80px;
+  height: 120px;
+  object-fit: cover;
+}
+
+.cart-item input {
+  width: 60px;
+  margin-top: 0.5rem;
+}
+
+.checkout-btn {
+  display: inline-block;
+  margin-top: 1.5rem;
+  background: black;
+  color: white;
+  padding: 0.75rem 1.2rem;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.cart-empty {
+  text-align: center;
+  padding: 3rem;
+}
