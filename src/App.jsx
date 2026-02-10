@@ -1,10 +1,10 @@
 import { Routes, Route } from "react-router-dom";
 import { motion } from "framer-motion";
 
+import Cart from "./pages/Cart";
 import Hero from "./components/Hero";
 import Books from "./components/Books";
 import Checkout from "./pages/Checkout";
-import Cart from "./pages/Cart";
 
 export default function App() {
   return (
