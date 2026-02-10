@@ -5,6 +5,7 @@ import Hero from "./components/Hero";
 import Books from "./components/Books";
 import Checkout from "./pages/Checkout";
 import Cart from "./pages/Cart";
+
 export default function App() {
   return (
     <>
