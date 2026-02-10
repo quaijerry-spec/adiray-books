@@ -1,4 +1,3 @@
-import "./Hero.css";
 import { motion } from "framer-motion";
 
 export default function Hero() {
