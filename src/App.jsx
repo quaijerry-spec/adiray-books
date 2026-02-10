@@ -3,6 +3,10 @@ import Books from "./components/Books";
 import Cart from "./components/Cart";
 import Checkout from "./components/Checkout";
 import Admin from "./components/Admin";
+import { Routes, Route } from "react-router-dom";
+import Hero from "./components/Hero";
+import Books from "./components/Books";
+import Checkout from "./pages/Checkout";
 
 export default function App() {
   const [cart, setCart] = useState([]);
@@ -26,3 +30,21 @@ export default function App() {
     </>
   );
 }
+function App() {
+  return (
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <>
+            <Hero />
+            <Books />
+          </>
+        }
+      />
+      <Route path="/checkout" element={<Checkout />} />
+    </Routes>
+  );
+}
+
+export default App;
