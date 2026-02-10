@@ -42,3 +42,16 @@
   padding: 6px 10px;
   cursor: pointer;
 }
+.book-card {
+  transition: transform 0.3s ease;
+}
+
+.book-card:hover {
+  transform: scale(1.05);
+}
+
+.search {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+}
