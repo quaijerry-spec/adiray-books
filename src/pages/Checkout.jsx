@@ -1,39 +1,24 @@
-import { loadStripe } from "@stripe/stripe-js";
-
-const stripePromise = loadStripe(
-  "pk_test_XXXXXXXXXXXXXXXXXXXXXXXX" // replace with your Stripe public key
-);
+import "./Checkout.css";
+import { motion } from "framer-motion";
 
 export default function Checkout() {
-  const handleCheckout = async () => {
-    const stripe = await stripePromise;
-
-    await stripe.redirectToCheckout({
-      lineItems: [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: "AdiRay Book Purchase",
-            },
-            unit_amount: 1500,
-          },
-          quantity: 1,
-        },
-      ],
-      mode: "payment",
-      successUrl: window.location.origin,
-      cancelUrl: window.location.origin,
-    });
+  const handleCheckout = () => {
+    // 🔐 Replace this with your REAL Stripe Checkout URL
+    window.location.href = "https://buy.stripe.com/test_XXXXXXXXXXXX";
   };
 
   return (
-    <div style={{ padding: "80px", textAlign: "center" }}>
+    <motion.div
+      className="checkout-page"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+    >
       <h1>Checkout</h1>
       <p>Secure payment powered by Stripe</p>
-      <button onClick={handleCheckout} style={{ padding: "12px 24px" }}>
-        Pay with Card
+
+      <button onClick={handleCheckout} className="checkout-btn">
+        Pay with Stripe
       </button>
-    </div>
+    </motion.div>
   );
 }
