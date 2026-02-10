@@ -1,28 +1,20 @@
-import { motion } from "framer-motion";
-
 export default function Hero() {
   return (
-    <div className="hero">
-      <div className="hero-overlay">
-        <motion.img
-          src="/logo.png"
-          alt="AdiRay Books"
-          className="hero-logo"
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-        />
-
-        <motion.h1
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          AdiRay Books
-        </motion.h1>
-
-        <p>Knowledge that transforms your life</p>
-      </div>
-    </div>
+    <section
+      style={{
+        minHeight: "60vh",
+        background: "linear-gradient(to right, #0f2027, #203a43, #2c5364)",
+        color: "white",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+        textAlign: "center",
+      }}
+    >
+      <img src="/logo.png" alt="AdiRay Books" style={{ width: 120 }} />
+      <h1>AdiRay Books</h1>
+      <p>Knowledge that changes lives</p>
+    </section>
   );
 }
