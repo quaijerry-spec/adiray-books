@@ -1,38 +1,14 @@
-import { Routes, Route } from "react-router-dom";
-import { useState } from "react";
-import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Books from "./components/Books";
-import Cart from "./components/Cart";
-import Checkout from "./pages/Checkout";
-import Admin from "./pages/Admin";
 
-export default function App() {
-  const [showCart, setShowCart] = useState(false);
-  const [search, setSearch] = useState("");
-
+function App() {
   return (
-    <div className="bg-gray-100 min-h-screen">
-      <Navbar
-        onCartClick={() => setShowCart(true)}
-        onSearch={setSearch}
-      />
-
+    <Router>
       <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <Hero />
-              <Books search={search} />
-            </>
-          }
-        />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/admin" element={<Admin />} />
+        <Route path="/" element={<Books />} />
       </Routes>
-
-      {showCart && <Cart onClose={() => setShowCart(false)} />}
-    </div>
+    </Router>
   );
 }
+
+export default App;
