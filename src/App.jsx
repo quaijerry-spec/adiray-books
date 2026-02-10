@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Hero from "./components/Hero";
 import Books from "./components/Books";
 import Checkout from "./pages/Checkout";
-
+import Cart from "./pages/Cart";
 export default function App() {
   return (
     <>
@@ -19,6 +19,7 @@ export default function App() {
       >
         <Routes>
           <Route path="/" element={<Books />} />
+          <Route path="/cart" element={<Cart />} />
           <Route path="/checkout" element={<Checkout />} />
         </Routes>
       </motion.main>
