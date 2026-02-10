@@ -3,37 +3,37 @@ import "./Books.css";
 const books = [
   {
     id: 1,
-    title: "Book One",
+    title: "The Power of Knowledge",
     price: "$10",
     image: "/book1.jpg",
   },
   {
     id: 2,
-    title: "Book Two",
+    title: "Mindset for Success",
     price: "$12",
     image: "/book2.jpg",
   },
   {
     id: 3,
-    title: "Book Three",
+    title: "Leadership Wisdom",
     price: "$15",
     image: "/book3.jpg",
   },
   {
     id: 4,
-    title: "Book Four",
+    title: "Faith & Growth",
     price: "$9",
     image: "/book4.jpg",
   },
   {
     id: 5,
-    title: "Book Five",
+    title: "Business Strategy 101",
     price: "$11",
     image: "/book5.jpg",
   },
   {
     id: 6,
-    title: "Book Six",
+    title: "Self-Discipline Guide",
     price: "$14",
     image: "/book6.jpg",
   },
@@ -47,10 +47,18 @@ export default function Books() {
       <div className="books-grid">
         {books.map((book) => (
           <div className="book-card" key={book.id}>
-            <img src={book.image} alt={book.title} />
-            <h3>{book.title}</h3>
-            <p>{book.price}</p>
-            <button>Add to Cart</button>
+            <img
+              src={book.image}
+              alt={book.title}
+              className="book-image"
+            />
+
+            <h3 className="book-title">{book.title}</h3>
+            <p className="book-price">{book.price}</p>
+
+            <button className="book-button">
+              Add to Cart
+            </button>
           </div>
         ))}
       </div>
