@@ -1,10 +1,8 @@
-// src/components/Books.jsx
+import { useCart } from "../context/CartContext";
 import { useState } from "react";
-import { useCart } from "../context/CartContext"; // Cart context
-import books from "../data/books";                // Books data
-import "./Books.css";                             // CSS in same folder
+import books from "../data/books";
+import "./Books.css";
 
-// Function to auto-assign categories
 const getCategory = (title) => {
   const t = title.toLowerCase();
 
@@ -21,11 +19,8 @@ const getCategory = (title) => {
 export default function Books() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
-
-  // ✅ useCart must be inside the component
   const { addToCart } = useCart();
 
-  // Filter books based on search & category
   const filteredBooks = books.filter((book) => {
     const matchesSearch = book.title.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = category === "All" || getCategory(book.title) === category;
@@ -35,8 +30,6 @@ export default function Books() {
   return (
     <section className="books-section">
       <h2 className="books-title">Available Books</h2>
-
-      {/* CONTROLS */}
       <div className="books-controls">
         <input
           type="text"
@@ -44,7 +37,6 @@ export default function Books() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
           <option value="All">All Categories</option>
           <option value="Business">Business</option>
@@ -57,7 +49,6 @@ export default function Books() {
         </select>
       </div>
 
-      {/* BOOK GRID */}
       <div className="books-grid">
         {filteredBooks.length === 0 ? (
           <p className="no-results">No books found.</p>
@@ -74,4 +65,4 @@ export default function Books() {
       </div>
     </section>
   );
-    }
+}
