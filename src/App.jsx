@@ -1,21 +1,16 @@
 import { Routes, Route } from "react-router-dom";
-import Hero from "./components/Hero";
-import Books from "./components/Books";
-import Checkout from "./pages/Checkout";
+import Home from "./Home";
+import Books from "./Books";
+import Checkout from "./Checkout";
 
-export default function App() {
+function App() {
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <>
-            <Hero />
-            <Books />
-          </>
-        }
-      />
+      <Route path="/" element={<Home />} />
+      <Route path="/books" element={<Books />} />
       <Route path="/checkout" element={<Checkout />} />
     </Routes>
   );
 }
+
+export default App;
