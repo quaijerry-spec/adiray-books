@@ -3,7 +3,10 @@ export default function Hero() {
     <section
       style={{
         minHeight: "60vh",
-        background: "linear-gradient(to right, #0f2027, #203a43, #2c5364)",
+        backgroundImage: "url('/hero-bg.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
         color: "white",
         display: "flex",
         alignItems: "center",
