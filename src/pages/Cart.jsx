@@ -1,4 +1,5 @@
 import { useCart } from "../context/CartContext";
+import { Link } from "react-router-dom";
 
 export default function Cart() {
   const { cart, removeFromCart, updateQuantity, total } = useCart();
@@ -7,12 +8,13 @@ export default function Cart() {
     return (
       <div style={{ padding: "40px", textAlign: "center" }}>
         <h2>Your Cart is Empty 🛒</h2>
+        <Link to="/">Go back to shop</Link>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: "40px" }}>
+    <section style={{ maxWidth: "800px", margin: "2rem auto", padding: "0 1rem" }}>
       <h2>Your Cart</h2>
 
       {cart.map((item) => (
@@ -33,26 +35,26 @@ export default function Cart() {
           </div>
 
           <div>
-            <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>
+            <button
+              onClick={() =>
+                updateQuantity(item.id, Math.max(1, item.quantity - 1))
+              }
+            >
               -
             </button>
 
-            <span style={{ margin: "0 10px" }}>
-              {item.quantity}
-            </span>
+            <span style={{ margin: "0 10px" }}>{item.quantity}</span>
 
             <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>
               +
             </button>
           </div>
 
-          <button onClick={() => removeFromCart(item.id)}>
-            Remove
-          </button>
+          <button onClick={() => removeFromCart(item.id)}>Remove</button>
         </div>
       ))}
 
-      <h3>Total: ${total}</h3>
+      <h3 style={{ textAlign: "right" }}>Total: ${total.toFixed(2)}</h3>
 
       <button
         style={{
@@ -65,6 +67,10 @@ export default function Cart() {
       >
         Checkout
       </button>
-    </div>
+
+      <div style={{ textAlign: "right", marginTop: "20px" }}>
+        <Link to="/">Continue Shopping 📚</Link>
+      </div>
+    </section>
   );
 }
