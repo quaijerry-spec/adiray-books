@@ -19,17 +19,24 @@ const getCategory = (title) => {
 export default function Books() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
+
   const { addToCart } = useCart();
 
   const filteredBooks = books.filter((book) => {
-    const matchesSearch = book.title.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = category === "All" || getCategory(book.title) === category;
+    const matchesSearch = book.title
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    const matchesCategory =
+      category === "All" || getCategory(book.title) === category;
+
     return matchesSearch && matchesCategory;
   });
 
   return (
     <section className="books-section">
       <h2 className="books-title">Available Books</h2>
+
       <div className="books-controls">
         <input
           type="text"
@@ -37,6 +44,7 @@ export default function Books() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
+
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
           <option value="All">All Categories</option>
           <option value="Business">Business</option>
@@ -58,7 +66,9 @@ export default function Books() {
               <img src={book.image} alt={book.title} />
               <h3>{book.title}</h3>
               <p className="price">${book.price}</p>
-              <button onClick={() => addToCart(book)}>Add to Cart</button>
+              <button onClick={() => addToCart(book)}>
+                Add to Cart
+              </button>
             </div>
           ))
         )}
