@@ -1,15 +1,15 @@
-import { Routes, Route } from "react-router-dom";
-import Home from "./Home";
-import Books from "./Books";
-import Checkout from "./Checkout";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Checkout from "./pages/Checkout";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/books" element={<Books />} />
-      <Route path="/checkout" element={<Checkout />} />
-    </Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/checkout" element={<Checkout />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
