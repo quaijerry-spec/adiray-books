@@ -1,8 +1,10 @@
-import { useCart } from "../context/CartContext";
+// src/components/Books.jsx
 import { useState } from "react";
-import books from "../data/books";
-import "./Books.css";
+import { useCart } from "../context/CartContext"; // Cart context
+import books from "../data/books";                // Books data
+import "./Books.css";                             // CSS in same folder
 
+// Function to auto-assign categories
 const getCategory = (title) => {
   const t = title.toLowerCase();
 
@@ -20,15 +22,13 @@ export default function Books() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
 
+  // ✅ useCart must be inside the component
   const { addToCart } = useCart();
+
+  // Filter books based on search & category
   const filteredBooks = books.filter((book) => {
-    const matchesSearch = book.title
-      .toLowerCase()
-      .includes(search.toLowerCase());
-
-    const matchesCategory =
-      category === "All" || getCategory(book.title) === category;
-
+    const matchesSearch = book.title.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = category === "All" || getCategory(book.title) === category;
     return matchesSearch && matchesCategory;
   });
 
@@ -67,13 +67,11 @@ export default function Books() {
               <img src={book.image} alt={book.title} />
               <h3>{book.title}</h3>
               <p className="price">${book.price}</p>
-             <button onClick={() => addToCart(book)}>
-  Add to Cart
-</button> 
+              <button onClick={() => addToCart(book)}>Add to Cart</button>
             </div>
           ))
         )}
       </div>
     </section>
   );
-}
+    }
