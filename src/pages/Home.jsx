@@ -9,8 +9,9 @@ export default function Home() {
 
   return (
     <>
+      {/* Header with Cart link */}
       <header style={{ display: "flex", justifyContent: "flex-end", padding: "20px" }}>
-        <Link to="/cart" style={{ textDecoration: "none" }}>
+        <Link to="/cart" style={{ textDecoration: "none", fontWeight: "bold" }}>
           🛒 Cart {totalItems > 0 && `(${totalItems})`}
         </Link>
       </header>
