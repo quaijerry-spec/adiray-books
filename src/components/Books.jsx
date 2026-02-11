@@ -3,8 +3,6 @@ import { useState } from "react";
 import books from "../data/books";
 import "./Books.css";
 
-// ✅ Move useCart inside component
-const { addToCart } = useCart();
 const getCategory = (title) => {
   const t = title.toLowerCase();
 
@@ -22,6 +20,7 @@ export default function Books() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
 
+  const { addToCart } = useCart();
   const filteredBooks = books.filter((book) => {
     const matchesSearch = book.title
       .toLowerCase()
