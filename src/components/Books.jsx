@@ -1,7 +1,7 @@
 import { useCart } from "../context/CartContext";
 import { useState } from "react";
 import books from "../data/books";
-import "../components/Books.css";
+import "./Books.css";
 
 const getCategory = (title) => {
   const t = title.toLowerCase();
