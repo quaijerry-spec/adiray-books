@@ -1,51 +1,70 @@
 import { useCart } from "../context/CartContext";
-import { Link } from "react-router-dom";
-import "./Cart.css";
 
 export default function Cart() {
   const { cart, removeFromCart, updateQuantity, total } = useCart();
 
   if (cart.length === 0) {
     return (
-      <div className="cart-empty">
-        <h2>Your cart is empty</h2>
-        <Link to="/">Go back to shop</Link>
+      <div style={{ padding: "40px", textAlign: "center" }}>
+        <h2>Your Cart is Empty 🛒</h2>
       </div>
     );
   }
 
   return (
-    <div className="cart-page">
+    <div style={{ padding: "40px" }}>
       <h2>Your Cart</h2>
 
       {cart.map((item) => (
-        <div className="cart-item" key={item.id}>
-          <img src={item.image} alt={item.title} />
+        <div
+          key={item.id}
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "20px",
+            borderBottom: "1px solid #ccc",
+            paddingBottom: "10px",
+          }}
+        >
           <div>
             <h3>{item.title}</h3>
             <p>${item.price}</p>
+          </div>
 
-            <input
-              type="number"
-              value={item.quantity}
-              min="1"
-              onChange={(e) =>
-                updateQuantity(item.id, Number(e.target.value))
-              }
-            />
+          <div>
+            <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>
+              -
+            </button>
 
-            <button onClick={() => removeFromCart(item.id)}>
-              Remove
+            <span style={{ margin: "0 10px" }}>
+              {item.quantity}
+            </span>
+
+            <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>
+              +
             </button>
           </div>
+
+          <button onClick={() => removeFromCart(item.id)}>
+            Remove
+          </button>
         </div>
       ))}
 
       <h3>Total: ${total}</h3>
 
-      <Link to="/checkout" className="checkout-btn">
-        Proceed to Checkout
-      </Link>
+      <button
+        style={{
+          padding: "10px 20px",
+          backgroundColor: "#2c5364",
+          color: "white",
+          border: "none",
+          cursor: "pointer",
+        }}
+      >
+        Checkout
+      </button>
     </div>
   );
 }
