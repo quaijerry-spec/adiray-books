@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { CartProvider } from "./context/CartContext"; // Wrap your app
-import Home from "./pages/Home"; // Home page
+import { CartProvider } from "./context/CartContext";
+import Home from "./pages/Home";
 
 export default function App() {
   return (
