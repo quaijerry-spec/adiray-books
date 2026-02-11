@@ -1,35 +1,27 @@
-import { useCart } from "../context/CartContext";
 import { useState } from "react";
+import { useCart } from "../context/CartContext";
 import books from "../data/books";
 import "./Books.css";
 
 const getCategory = (title) => {
   const t = title.toLowerCase();
-
   if (t.includes("habit") || t.includes("mind") || t.includes("stoic")) return "Self-Help";
   if (t.includes("business") || t.includes("strategy") || t.includes("startup")) return "Business";
   if (t.includes("rich") || t.includes("money") || t.includes("wealth")) return "Finance";
   if (t.includes("power") || t.includes("war") || t.includes("law")) return "Psychology";
   if (t.includes("love") || t.includes("life") || t.includes("meaning")) return "Philosophy";
   if (t.includes("club") || t.includes("alchemist") || t.includes("coffee")) return "Fiction";
-
   return "Other";
 };
 
 export default function Books() {
+  const { addToCart } = useCart();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
 
-  const { addToCart } = useCart();
-
   const filteredBooks = books.filter((book) => {
-    const matchesSearch = book.title
-      .toLowerCase()
-      .includes(search.toLowerCase());
-
-    const matchesCategory =
-      category === "All" || getCategory(book.title) === category;
-
+    const matchesSearch = book.title.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = category === "All" || getCategory(book.title) === category;
     return matchesSearch && matchesCategory;
   });
 
@@ -66,9 +58,7 @@ export default function Books() {
               <img src={book.image} alt={book.title} />
               <h3>{book.title}</h3>
               <p className="price">${book.price}</p>
-              <button onClick={() => addToCart(book)}>
-                Add to Cart
-              </button>
+              <button onClick={() => addToCart(book)}>Add to Cart</button>
             </div>
           ))
         )}
