@@ -1,14 +1,15 @@
-// src/App.jsx
-import React from "react";
-import { CartProvider } from "./context/CartContext"; // make sure the path is correct
-import Home from "./pages/Home";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { CartProvider } from "./context/CartContext"; // Wrap your app
+import Home from "./pages/Home"; // Home page
 
-function App() {
+export default function App() {
   return (
     <CartProvider>
-      <Home />
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+        </Routes>
+      </Router>
     </CartProvider>
   );
 }
-
-export default App;
