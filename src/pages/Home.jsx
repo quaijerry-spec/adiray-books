@@ -6,20 +6,19 @@ import { useCart } from "../context/CartContext";
 export default function Home() {
   const { cart } = useCart();
 
-  // Total quantity of items in cart
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <>
-      {/* Header with Cart button and item count */}
+      {/* Cart header */}
       <header style={{
         display: "flex",
         justifyContent: "flex-end",
         padding: "20px",
         backgroundColor: "#2c5364",
       }}>
-        <Link 
-          to="/cart" 
+        <Link
+          to="/cart"
           style={{
             color: "white",
             textDecoration: "none",
@@ -49,9 +48,8 @@ export default function Home() {
         </Link>
       </header>
 
-      {/* Main content */}
       <Hero />
       <Books />
     </>
   );
-    }
+}
