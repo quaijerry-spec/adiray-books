@@ -3,7 +3,7 @@ import { useState } from "react";
 import books from "../data/books";
 import "./Books.css";
 
-/* AUTO CATEGORY LOGIC */
+// ✅ Move useCart inside component
 const { addToCart } = useCart();
 const getCategory = (title) => {
   const t = title.toLowerCase();
