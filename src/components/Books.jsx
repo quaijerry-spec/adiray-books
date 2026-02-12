@@ -1,68 +1,54 @@
-import { useState } from "react";
 import { useCart } from "../context/CartContext";
 import books from "../data/books";
-import "./Books.css";
 
-const getCategory = (title) => {
-  const t = title.toLowerCase();
-  if (t.includes("habit") || t.includes("mind") || t.includes("stoic")) return "Self-Help";
-  if (t.includes("business") || t.includes("strategy") || t.includes("startup")) return "Business";
-  if (t.includes("rich") || t.includes("money") || t.includes("wealth")) return "Finance";
-  if (t.includes("power") || t.includes("war") || t.includes("law")) return "Psychology";
-  if (t.includes("love") || t.includes("life") || t.includes("meaning")) return "Philosophy";
-  if (t.includes("club") || t.includes("alchemist") || t.includes("coffee")) return "Fiction";
-  return "Other";
-};
-
-export default function Books() {
+export default function Books({ search }) {
   const { addToCart } = useCart();
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
 
-  const filteredBooks = books.filter((book) => {
-    const matchesSearch = book.title.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = category === "All" || getCategory(book.title) === category;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredBooks = books.filter((book) =>
+    book.title.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
-    <section className="books-section">
-      <h2 className="books-title">Available Books</h2>
+    <section className="max-w-6xl mx-auto px-6 py-16">
+      <h2 className="text-3xl font-bold mb-8">Our Collection</h2>
 
-      <div className="books-controls">
-        <input
-          type="text"
-          placeholder="Search books..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        {filteredBooks.map((book) => (
+          <div
+            key={book.id}
+            className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition"
+          >
+            <img
+              src={book.image}
+              alt={book.title}
+              className="h-60 w-full object-cover"
+            />
 
-        <select value={category} onChange={(e) => setCategory(e.target.value)}>
-          <option value="All">All Categories</option>
-          <option value="Business">Business</option>
-          <option value="Self-Help">Self-Help</option>
-          <option value="Finance">Finance</option>
-          <option value="Psychology">Psychology</option>
-          <option value="Philosophy">Philosophy</option>
-          <option value="Fiction">Fiction</option>
-          <option value="Other">Other</option>
-        </select>
-      </div>
+            <div className="p-5">
+              <h3 className="font-semibold text-lg mb-2 line-clamp-2">
+                {book.title}
+              </h3>
 
-      <div className="books-grid">
-        {filteredBooks.length === 0 ? (
-          <p className="no-results">No books found.</p>
-        ) : (
-          filteredBooks.map((book) => (
-            <div className="book-card" key={book.id}>
-              <img src={book.image} alt={book.title} />
-              <h3>{book.title}</h3>
-              <p className="price">${book.price}</p>
-              <button onClick={() => addToCart(book)}>Add to Cart</button>
+              <p className="text-yellow-500 font-bold mb-4">
+                ${book.price}
+              </p>
+
+              <button
+                onClick={() => addToCart(book)}
+                className="bg-gray-800 text-white px-4 py-2 rounded-full hover:bg-yellow-400 hover:text-black transition w-full"
+              >
+                Add to Cart
+              </button>
             </div>
-          ))
-        )}
+          </div>
+        ))}
       </div>
+
+      {filteredBooks.length === 0 && (
+        <p className="mt-10 text-gray-500 text-center">
+          No books found.
+        </p>
+      )}
     </section>
   );
-          }
+}
