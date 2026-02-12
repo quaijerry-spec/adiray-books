@@ -1,6 +1,19 @@
 import { useState } from "react";
 import books from "../data/books"; // <-- import your full books array
 export default function Home({ search, setSearch }) {
+ export default function Home() {
+  const [search, setSearch] = useState("");
+
+  const filteredBooks = books.filter((book) =>
+    book.title.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div className="pt-32 bg-gray-100 min-h-screen">
+      ...
+    </div>
+  );
+ }
   const books = [
     {
       id: 1,
@@ -21,14 +34,6 @@ export default function Home({ search, setSearch }) {
       image: "https://images.unsplash.com/photo-1528207776546-365bb710ee93",
     },
   ];
-
-  const [search, setSearch] = useState("");
-  const filteredBooks = books.filter((book) =>
-   book.title.toLowerCase().includes(search.toLowerCase())
-  );
-
-  return (
-    <div className="pt-32 bg-gray-100 min-h-screen">
 
       {/* HERO SECTION */}
       <section
