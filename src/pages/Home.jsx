@@ -22,8 +22,9 @@ export default function Home({ search, setSearch }) {
     },
   ];
 
+  const [search, setSearch] = useState("");
   const filteredBooks = books.filter((book) =>
-    book.title.toLowerCase().includes(search.toLowerCase())
+   book.title.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
