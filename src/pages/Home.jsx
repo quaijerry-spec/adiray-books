@@ -20,22 +20,22 @@ export default function Home() {
     <div className="pt-32 bg-gray-100 min-h-screen">
 
       {/* HERO SECTION */}
-      <section
-        className="relative h-[500px] bg-cover bg-center flex items-center"
-        style={{ backgroundImage: "url('/hero.jpg')" }}
-      >
-        <div className="absolute inset-0 bg-black/60"></div>
+<section
+  className="relative h-[500px] bg-cover bg-center flex items-center"
+  style={{ backgroundImage: "url('/hero-bg.jpg')" }} // <-- use your hero image
+>
+  <div className="absolute inset-0 bg-black/60"></div>
 
-        <div className="relative z-10 max-w-4xl mx-auto px-6 text-white">
-          <h1 className="text-5xl font-bold mb-6">Read Learn Grow</h1>
-          <p className="text-lg mb-8 max-w-xl">
-            Discover your next great read from our curated collection.
-          </p>
-          <button className="bg-yellow-400 text-black px-6 py-3 rounded-full font-semibold hover:scale-105 transition">
-            Browse Books
-          </button>
-        </div>
-      </section>
+  <div className="relative z-10 max-w-4xl mx-auto px-6 text-white">
+    <h1 className="text-5xl font-bold mb-6">Read Learn Grow</h1>
+    <p className="text-lg mb-8 max-w-xl">
+      Discover your next great read from our curated collection.
+    </p>
+    <button className="bg-yellow-400 text-black px-6 py-3 rounded-full font-semibold hover:scale-105 transition">
+      Browse Books
+    </button>
+  </div>
+</section>
 
       {/* COLLECTION SECTION */}
       <section className="max-w-6xl mx-auto px-6 py-16">
