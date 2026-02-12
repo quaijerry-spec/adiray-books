@@ -1,6 +1,7 @@
 import { useCart } from "../context/CartContext";
 import books from "../data/books";
-
+const books = [ ... ]; // all 71 books
+export default books;
 export default function Books({ search }) {
   const { addToCart } = useCart();
 
