@@ -1,9 +1,11 @@
 import { useState } from "react";
 import books from "../data/books"; // your full 71-book array
+import { useCart } from "../context/CartContext";
 
 export default function Home() {
   const [search, setSearch] = useState("");
-
+  const { addToCart } = useCart();
+  
   // Normalize function to safely handle quotes, accents, and special characters
   const normalize = (str) =>
     str
@@ -11,7 +13,7 @@ export default function Home() {
       .normalize("NFD") // separates accents from letters
       .replace(/[\u0300-\u036f]/g, "") // removes accents
       .replace(/[^a-z0-9 ]/g, ""); // removes special characters
-
+  
   const filteredBooks = books.filter((book) =>
     normalize(book.title).includes(normalize(search))
   );
@@ -31,9 +33,12 @@ export default function Home() {
     <p className="text-lg mb-8 max-w-xl">
       Discover your next great read from our curated collection.
     </p>
-    <button className="bg-yellow-400 text-black px-6 py-3 rounded-full font-semibold hover:scale-105 transition">
-      Browse Books
-    </button>
+   <button
+  onClick={() => addToCart(book)}
+  className="bg-gray-800 text-white px-4 py-2 rounded-full hover:bg-yellow-400 hover:text-black transition"
+>
+  Add to Cart
+</button> 
   </div>
 </section>
 
