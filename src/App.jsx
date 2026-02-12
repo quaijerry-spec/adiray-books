@@ -8,12 +8,14 @@ import { CartProvider } from "./context/CartContext";
 export default function App() {
   return (
     <CartProvider>
-      <Navbar /> {/* No Router here */}
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/cart" element={<Cart />} />
-      </Routes>
-      <Footer />
+      <div className="bg-gray-100 min-h-screen">
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/cart" element={<Cart />} />
+        </Routes>
+        <Footer />
+      </div>
     </CartProvider>
   );
 }
