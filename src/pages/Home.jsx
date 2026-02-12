@@ -1,7 +1,7 @@
 import { useState } from "react";
-import books from "../data/books"; // <-- import your full books array
-export default function Home({ search, setSearch }) {
- export default function Home() {
+import books from "../data/books"; // your full 71-book array
+
+export default function Home() {
   const [search, setSearch] = useState("");
 
   const filteredBooks = books.filter((book) =>
@@ -10,30 +10,6 @@ export default function Home({ search, setSearch }) {
 
   return (
     <div className="pt-32 bg-gray-100 min-h-screen">
-      ...
-    </div>
-  );
- }
-  const books = [
-    {
-      id: 1,
-      title: "Atomic Habits",
-      price: 20,
-      image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c",
-    },
-    {
-      id: 2,
-      title: "Rich Dad Poor Dad",
-      price: 18,
-      image: "https://images.unsplash.com/photo-1519681393784-d120267933ba",
-    },
-    {
-      id: 3,
-      title: "The Power of Now",
-      price: 22,
-      image: "https://images.unsplash.com/photo-1528207776546-365bb710ee93",
-    },
-  ];
 
       {/* HERO SECTION */}
       <section
@@ -103,7 +79,6 @@ export default function Home({ search, setSearch }) {
             </div>
           ))}
         </div>
-
       </section>
     </div>
   );
