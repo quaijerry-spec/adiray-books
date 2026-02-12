@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
-    <footer style={{ textAlign: "center", padding: "20px", background: "#f1f1f1" }}>
-      © 2026 AdiRay Books
+    <footer className="bg-gray-800 text-white text-center py-6">
+      © 2026 AdiRay Books. All rights reserved.
     </footer>
   );
 }
