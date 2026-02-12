@@ -1,8 +1,4 @@
-import { useState } from "react";
-
-export default function Home() {
-  const [search, setSearch] = useState("");
-
+export default function Home({ search, setSearch }) {
   const books = [
     {
       id: 1,
