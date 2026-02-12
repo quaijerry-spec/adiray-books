@@ -1,11 +1,9 @@
 import { useState } from "react";
-import books from "../data/books"; // your full 71-book array
-import { useCart } from "../context/CartContext";
+import books from "../data/books";
 
 export default function Home() {
   const [search, setSearch] = useState("");
-  const { addToCart } = useCart();
-  
+
   // Normalize function to safely handle quotes, accents, and special characters
   const normalize = (str) =>
     str
@@ -13,34 +11,30 @@ export default function Home() {
       .normalize("NFD") // separates accents from letters
       .replace(/[\u0300-\u036f]/g, "") // removes accents
       .replace(/[^a-z0-9 ]/g, ""); // removes special characters
-  
-  const filteredBooks = books.filter((book) =>
+
+  // <-- REPLACE YOUR OLD filteredBooks LINE WITH THIS
+  const filteredBooks = (books || []).filter((book) =>
     normalize(book.title).includes(normalize(search))
   );
 
   return (
     <div className="pt-32 bg-gray-100 min-h-screen">
-
       {/* HERO SECTION */}
-<section
-  className="relative h-[500px] bg-cover bg-center flex items-center"
-  style={{ backgroundImage: "url('/hero-bg.jpg')" }} // <-- use your hero image
->
-  <div className="absolute inset-0 bg-black/60"></div>
-
-  <div className="relative z-10 max-w-4xl mx-auto px-6 text-white">
-    <h1 className="text-5xl font-bold mb-6">Read Learn Grow</h1>
-    <p className="text-lg mb-8 max-w-xl">
-      Discover your next great read from our curated collection.
-    </p>
-   <button
-  onClick={() => addToCart(book)}
-  className="bg-gray-800 text-white px-4 py-2 rounded-full hover:bg-yellow-400 hover:text-black transition"
->
-  Add to Cart
-</button> 
-  </div>
-</section>
+      <section
+        className="relative h-[500px] bg-cover bg-center flex items-center"
+        style={{ backgroundImage: "url('/hero-bg.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-black/60"></div>
+        <div className="relative z-10 max-w-4xl mx-auto px-6 text-white">
+          <h1 className="text-5xl font-bold mb-6">Read Learn Grow</h1>
+          <p className="text-lg mb-8 max-w-xl">
+            Discover your next great read from our curated collection.
+          </p>
+          <button className="bg-yellow-400 text-black px-6 py-3 rounded-full font-semibold hover:scale-105 transition">
+            Browse Books
+          </button>
+        </div>
+      </section>
 
       {/* COLLECTION SECTION */}
       <section className="max-w-6xl mx-auto px-6 py-16">
@@ -69,7 +63,6 @@ export default function Home() {
                 alt={book.title}
                 className="h-60 w-full object-cover"
               />
-
               <div className="p-5">
                 <h3 className="font-semibold text-lg mb-2">{book.title}</h3>
                 <p className="text-yellow-500 font-bold mb-4">${book.price}</p>
