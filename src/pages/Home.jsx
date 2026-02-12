@@ -1,3 +1,5 @@
+import { useState } from "react";
+import books from "../data/books"; // <-- import your full books array
 export default function Home({ search, setSearch }) {
   const books = [
     {
