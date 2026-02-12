@@ -1,25 +1,20 @@
-import { useState } from "react";
-import books from "../data/books";
+import books from "../books"; // <-- correct path
 
-export default function Home() {
-  const [search, setSearch] = useState("");
-
-  // Normalize function to safely handle quotes, accents, and special characters
+export default function Home({ search, setSearch }) {
   const normalize = (str) =>
     str
-      .toLowerCase()
-      .normalize("NFD") // separates accents from letters
-      .replace(/[\u0300-\u036f]/g, "") // removes accents
-      .replace(/[^a-z0-9 ]/g, ""); // removes special characters
+      ?.toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9 ]/g, "") || "";
 
-  // <-- REPLACE YOUR OLD filteredBooks LINE WITH THIS
   const filteredBooks = (books || []).filter((book) =>
     normalize(book.title).includes(normalize(search))
   );
 
   return (
     <div className="pt-32 bg-gray-100 min-h-screen">
-      {/* HERO SECTION */}
+      {/* Hero Section */}
       <section
         className="relative h-[500px] bg-cover bg-center flex items-center"
         style={{ backgroundImage: "url('/hero-bg.jpg')" }}
@@ -36,24 +31,24 @@ export default function Home() {
         </div>
       </section>
 
-      {/* COLLECTION SECTION */}
+      {/* Collection Section */}
       <section className="max-w-6xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-bold mb-8">Our Collection</h2>
 
-        {/* SEARCH BAR */}
+        {/* Search Bar */}
         <div className="mb-10">
           <input
             type="text"
             placeholder="🔍 Search books..."
-            value={search}
+            value={search || ""}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full md:w-96 px-5 py-3 rounded-full shadow-sm border focus:ring-2 focus:ring-yellow-400 focus:outline-none"
           />
         </div>
 
-        {/* BOOK GRID */}
+        {/* Book Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {filteredBooks.map((book) => (
+          {(filteredBooks || []).map((book) => (
             <div
               key={book.id}
               className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition"
