@@ -7,7 +7,7 @@ export function CartProvider({ children }) {
 
   // Load from localStorage safely
   useEffect(() => {
-    const savedCart = localStorage.getItem("cart");
+    const savedCart = localStorage.getItem("adiray-cart");
     if (savedCart) {
       try {
         const parsed = JSON.parse(savedCart);
@@ -22,8 +22,7 @@ export function CartProvider({ children }) {
 
   // Save to localStorage
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cartItems));
-  }, [cartItems]);
+    localStorage.setItem("adiray-cart", JSON.stringify(cartItems));
 
   const addToCart = (book) => {
     if (!book) return;
