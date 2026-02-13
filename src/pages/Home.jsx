@@ -1,49 +1,59 @@
-import books from "../books";
+import { useState } from "react";
+import books from "../books"; // Make sure this path is correct
 
-export default function Home({ search, setSearch }) {
-  const [search, setSearch] = useState(""); // ❌ conflict with props
-  // normalize function
+export default function Home() {
+  const [search, setSearch] = useState("");
+
+  // Normalize function to safely compare strings
   const normalize = (str) =>
     (str || "")
       .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9 ]/g, "");
+      .normalize("NFD") // separates accents from letters
+      .replace(/[\u0300-\u036f]/g, "") // removes accents
+      .replace(/[^a-z0-9 ]/g, ""); // removes special characters
 
-  // ONLY ONE filteredBooks declaration
+  // Filter books safely
   const filteredBooks = (books || []).filter((book) =>
-    normalize(book.title).includes(normalize(search || ""))
+    normalize(book.title).includes(normalize(search))
   );
 
   return (
     <div className="pt-32 bg-gray-100 min-h-screen">
-      {/* HERO */}
+
+      {/* HERO SECTION */}
       <section
         className="relative h-[500px] bg-cover bg-center flex items-center"
         style={{ backgroundImage: "url('/hero-bg.jpg')" }}
       >
         <div className="absolute inset-0 bg-black/60"></div>
+
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-white">
           <h1 className="text-5xl font-bold mb-6">Read Learn Grow</h1>
           <p className="text-lg mb-8 max-w-xl">
             Discover your next great read from our curated collection.
           </p>
+          <button className="bg-yellow-400 text-black px-6 py-3 rounded-full font-semibold hover:scale-105 transition">
+            Browse Books
+          </button>
         </div>
       </section>
 
-      {/* COLLECTION */}
+      {/* COLLECTION SECTION */}
       <section className="max-w-6xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-bold mb-8">Our Collection</h2>
+
+        {/* SEARCH BAR */}
         <div className="mb-10">
           <input
             type="text"
             placeholder="🔍 Search books..."
-            value={search || ""}
+            value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full md:w-96 px-5 py-3 rounded-full shadow-sm border focus:ring-2 focus:ring-yellow-400 focus:outline-none"
           />
         </div>
 
+        {/* BOOK GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {(filteredBooks || []).map((book) => (
             <div
@@ -55,6 +65,7 @@ export default function Home({ search, setSearch }) {
                 alt={book.title}
                 className="h-60 w-full object-cover"
               />
+
               <div className="p-5">
                 <h3 className="font-semibold text-lg mb-2">{book.title}</h3>
                 <p className="text-yellow-500 font-bold mb-4">${book.price}</p>
