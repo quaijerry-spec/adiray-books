@@ -1,6 +1,7 @@
 import books from "../books";
 
 export default function Home({ search, setSearch }) {
+  const [search, setSearch] = useState(""); // ❌ conflict with props
   // normalize function
   const normalize = (str) =>
     (str || "")
