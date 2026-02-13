@@ -10,10 +10,12 @@ export default function Cart() {
     clearCart,
   } = useCart();
 
-  const totalPrice = (cartItems || []).reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
+  const { cartItems = [], increaseQuantity, decreaseQuantity, removeFromCart, clearCart } = useCart();
+
+const totalPrice = (cartItems || []).reduce(
+  (total, item) => total + (item.price || 0) * (item.quantity || 0),
+  0
+);
 
   return (
     <div className="pt-32 min-h-screen bg-gray-100 px-6">
