@@ -10,7 +10,7 @@ export default function Cart() {
     clearCart,
   } = useCart();
 
-  const totalPrice = cartItems.reduce(
+  const totalPrice = (cartItems || []).reduce(
     (total, item) => total + item.price * item.quantity,
     0
   );
