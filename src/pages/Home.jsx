@@ -2,11 +2,15 @@ import books from "../books"; // <-- correct path
 
 export default function Home({ search, setSearch }) {
   const normalize = (str) =>
-    str
-      ?.toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^a-z0-9 ]/g, "") || "";
+  (str || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9 ]/g, "");
+
+const filteredBooks = (books || []).filter((book) =>
+  normalize(book.title).includes(normalize(search))
+);
 
   const filteredBooks = (books || []).filter((book) =>
     normalize(book.title).includes(normalize(search))
