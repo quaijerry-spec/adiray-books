@@ -3,19 +3,18 @@ import { useCart } from "../context/CartContext";
 
 export default function Cart() {
   const {
-    cartItems,
+    cartItems = [],
     increaseQuantity,
     decreaseQuantity,
     removeFromCart,
     clearCart,
   } = useCart();
 
-  const { cartItems = [], increaseQuantity, decreaseQuantity, removeFromCart, clearCart } = useCart();
-
-const totalPrice = (cartItems || []).reduce(
-  (total, item) => total + (item.price || 0) * (item.quantity || 0),
-  0
-);
+  // Total price safely
+  const totalPrice = (cartItems || []).reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
 
   return (
     <div className="pt-32 min-h-screen bg-gray-100 px-6">
@@ -28,7 +27,7 @@ const totalPrice = (cartItems || []).reduce(
           </p>
         ) : (
           <>
-            {cartItems.map((item) => (
+            {(cartItems || []).map((item) => (
               <div
                 key={item.id}
                 className="flex justify-between items-center border-b py-4"
@@ -46,9 +45,7 @@ const totalPrice = (cartItems || []).reduce(
                     −
                   </button>
 
-                  <span className="font-semibold">
-                    {item.quantity}
-                  </span>
+                  <span className="font-semibold">{item.quantity}</span>
 
                   <button
                     onClick={() => increaseQuantity(item.id)}
@@ -68,9 +65,7 @@ const totalPrice = (cartItems || []).reduce(
             ))}
 
             <div className="mt-6 flex justify-between items-center">
-              <h3 className="text-xl font-bold">
-                Total: ${totalPrice}
-              </h3>
+              <h3 className="text-xl font-bold">Total: ${totalPrice}</h3>
 
               <div className="flex gap-3">
                 <button
@@ -93,4 +88,4 @@ const totalPrice = (cartItems || []).reduce(
       </div>
     </div>
   );
-}
+            }
