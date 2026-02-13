@@ -5,7 +5,7 @@ const CartContext = createContext();
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
 
-  // Load from localStorage safely
+  // Load cart from localStorage on mount
   useEffect(() => {
     const savedCart = localStorage.getItem("adiray-cart");
     if (savedCart) {
@@ -20,16 +20,16 @@ export function CartProvider({ children }) {
     }
   }, []);
 
-  // Save to localStorage
+  // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("adiray-cart", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const addToCart = (book) => {
     if (!book) return;
 
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === book.id);
-
       if (existing) {
         return prev.map((item) =>
           item.id === book.id
@@ -37,7 +37,6 @@ export function CartProvider({ children }) {
             : item
         );
       }
-
       return [...prev, { ...book, quantity: 1 }];
     });
   };
@@ -64,6 +63,12 @@ export function CartProvider({ children }) {
     );
   };
 
+  const removeFromCart = (id) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const clearCart = () => setCartItems([]);
+
   const cartCount = Array.isArray(cartItems)
     ? cartItems.reduce((total, item) => total + (item.quantity || 0), 0)
     : 0;
@@ -75,6 +80,8 @@ export function CartProvider({ children }) {
         addToCart,
         increaseQuantity,
         decreaseQuantity,
+        removeFromCart,
+        clearCart,
         cartCount,
       }}
     >
@@ -85,4 +92,4 @@ export function CartProvider({ children }) {
 
 export function useCart() {
   return useContext(CartContext);
-    }
+}
