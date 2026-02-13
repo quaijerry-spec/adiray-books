@@ -2,21 +2,23 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext();
 
-// CartProvider wraps the app
 export function CartProvider({ children }) {
+  // Load cart from localStorage safely
   const [cartItems, setCartItems] = useState(() => {
     try {
       const saved = localStorage.getItem("adiray-cart");
       return saved ? JSON.parse(saved) : [];
     } catch {
-      return []; // fallback if parsing fails
+      return [];
     }
   });
 
+  // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("adiray-cart", JSON.stringify(cartItems));
   }, [cartItems]);
 
+  // Add a book to the cart
   const addToCart = (book) => {
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === book.id);
@@ -31,6 +33,7 @@ export function CartProvider({ children }) {
     });
   };
 
+  // Increase quantity
   const increaseQuantity = (id) => {
     setCartItems((prev) =>
       prev.map((item) =>
@@ -39,6 +42,7 @@ export function CartProvider({ children }) {
     );
   };
 
+  // Decrease quantity safely (remove if quantity <= 0)
   const decreaseQuantity = (id) => {
     setCartItems((prev) =>
       prev
@@ -49,10 +53,16 @@ export function CartProvider({ children }) {
     );
   };
 
-  const removeFromCart = (id) => setCartItems((prev) => prev.filter((i) => i.id !== id));
+  // Remove completely
+  const removeFromCart = (id) => {
+    setCartItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  // Clear entire cart
   const clearCart = () => setCartItems([]);
 
-  const cartCount = cartItems?.reduce((total, item) => total + item.quantity, 0) || 0;
+  // Total items count
+  const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <CartContext.Provider
@@ -69,20 +79,9 @@ export function CartProvider({ children }) {
       {children}
     </CartContext.Provider>
   );
-};
+}
 
+// Hook to use cart safely
 export function useCart() {
-  const context = useContext(CartContext);
-  if (!context) {
-    return {
-      cartItems: [],
-      addToCart: () => {},
-      increaseQuantity: () => {},
-      decreaseQuantity: () => {},
-      removeFromCart: () => {},
-      clearCart: () => {},
-      cartCount: 0,
-    };
-  }
-  return context;
-                 }
+  return useContext(CartContext) || { cartItems: [], cartCount: 0 };
+                            }
