@@ -1,24 +1,22 @@
-import books from "../books"; // <-- correct path
+import books from "../books";
 
 export default function Home({ search, setSearch }) {
+  // normalize function
   const normalize = (str) =>
-  (str || "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9 ]/g, "");
+    (str || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9 ]/g, "");
 
-const filteredBooks = (books || []).filter((book) =>
-  normalize(book.title).includes(normalize(search))
-);
-
+  // ONLY ONE filteredBooks declaration
   const filteredBooks = (books || []).filter((book) =>
-    normalize(book.title).includes(normalize(search))
+    normalize(book.title).includes(normalize(search || ""))
   );
 
   return (
     <div className="pt-32 bg-gray-100 min-h-screen">
-      {/* Hero Section */}
+      {/* HERO */}
       <section
         className="relative h-[500px] bg-cover bg-center flex items-center"
         style={{ backgroundImage: "url('/hero-bg.jpg')" }}
@@ -29,17 +27,12 @@ const filteredBooks = (books || []).filter((book) =>
           <p className="text-lg mb-8 max-w-xl">
             Discover your next great read from our curated collection.
           </p>
-          <button className="bg-yellow-400 text-black px-6 py-3 rounded-full font-semibold hover:scale-105 transition">
-            Browse Books
-          </button>
         </div>
       </section>
 
-      {/* Collection Section */}
+      {/* COLLECTION */}
       <section className="max-w-6xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-bold mb-8">Our Collection</h2>
-
-        {/* Search Bar */}
         <div className="mb-10">
           <input
             type="text"
@@ -50,7 +43,6 @@ const filteredBooks = (books || []).filter((book) =>
           />
         </div>
 
-        {/* Book Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {(filteredBooks || []).map((book) => (
             <div
