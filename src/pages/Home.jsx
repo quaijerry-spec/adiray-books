@@ -1,9 +1,11 @@
+import { useCart } from "../context/CartContext";
 import { useState } from "react";
 import books from "../books";
 
 export default function Home() {
   const [search, setSearch] = useState("");
-
+  const { addToCart } = useCart();
+  
   const normalize = (str) =>
     (str || "")
       .toLowerCase()
@@ -58,9 +60,12 @@ export default function Home() {
               <div className="p-5">
                 <h3 className="font-semibold text-lg mb-2">{book.title}</h3>
                 <p className="text-yellow-500 font-bold mb-4">${book.price}</p>
-                <button className="bg-gray-800 text-white px-4 py-2 rounded-full hover:bg-yellow-400 hover:text-black transition">
-                  Add to Cart
-                </button>
+                <button
+  onClick={() => addToCart(book)}
+  className="bg-gray-800 text-white px-4 py-2 rounded-full hover:bg-yellow-400 hover:text-black transition"
+>
+  Add to Cart
+</button>
               </div>
             </div>
           ))}
