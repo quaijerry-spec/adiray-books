@@ -3,6 +3,9 @@ import { createContext, useContext, useState, useEffect } from "react";
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
+export function useCart() {
+  return useContext(CartContext) || { cartItems: [], increaseQuantity: () => {}, decreaseQuantity: () => {}, removeFromCart: () => {}, clearCart: () => {}, cartCount: 0 };
+} 
   const [cartItems, setCartItems] = useState([]);
 
   // Load cart from localStorage on mount
