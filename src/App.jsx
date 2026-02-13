@@ -11,9 +11,9 @@ export default function App() {
       <Navbar /> {/* search can be handled inside Home */}
 
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/cart" element={<Cart />} />
-      </Routes>
+  <Route path="/" element={<Home search={search} setSearch={setSearch} />} />
+  <Route path="/cart" element={<Cart />} />
+</Routes>
 
       <Footer />
     </CartProvider>
