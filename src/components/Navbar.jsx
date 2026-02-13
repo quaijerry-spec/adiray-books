@@ -3,7 +3,7 @@ import { useCart } from "../context/CartContext";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 
 export default function Navbar() {
-  const { cartCount } = useCart(); // ✅ correct value
+  const { cartCount = 0 } = useCart() || {}; // default to 0
 
   return (
     <div className="fixed top-6 left-0 right-0 flex justify-center z-50">
