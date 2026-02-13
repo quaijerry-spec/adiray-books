@@ -1,24 +1,32 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
-const CartContext = createContext(null);
+const CartContext = createContext();
 
 export function CartProvider({ children }) {
-  const [cartItems, setCartItems] = useState(() => {
-    try {
-      const saved = localStorage.getItem("adiray-cart");
-      const parsed = saved ? JSON.parse(saved) : [];
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
-  });
+  const [cartItems, setCartItems] = useState([]);
 
+  // Load from localStorage safely
   useEffect(() => {
-    localStorage.setItem("adiray-cart", JSON.stringify(cartItems));
+    const savedCart = localStorage.getItem("cart");
+    if (savedCart) {
+      try {
+        const parsed = JSON.parse(savedCart);
+        if (Array.isArray(parsed)) {
+          setCartItems(parsed);
+        }
+      } catch (error) {
+        console.error("Error parsing cart:", error);
+      }
+    }
+  }, []);
+
+  // Save to localStorage
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cartItems));
   }, [cartItems]);
 
   const addToCart = (book) => {
-    if (!book || !book.id) return;
+    if (!book) return;
 
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === book.id);
@@ -26,7 +34,7 @@ export function CartProvider({ children }) {
       if (existing) {
         return prev.map((item) =>
           item.id === book.id
-            ? { ...item, quantity: (item.quantity || 0) + 1 }
+            ? { ...item, quantity: (item.quantity || 1) + 1 }
             : item
         );
       }
@@ -39,7 +47,7 @@ export function CartProvider({ children }) {
     setCartItems((prev) =>
       prev.map((item) =>
         item.id === id
-          ? { ...item, quantity: (item.quantity || 0) + 1 }
+          ? { ...item, quantity: (item.quantity || 1) + 1 }
           : item
       )
     );
@@ -50,18 +58,12 @@ export function CartProvider({ children }) {
       prev
         .map((item) =>
           item.id === id
-            ? { ...item, quantity: (item.quantity || 0) - 1 }
+            ? { ...item, quantity: (item.quantity || 1) - 1 }
             : item
         )
-        .filter((item) => (item.quantity || 0) > 0)
+        .filter((item) => item.quantity > 0)
     );
   };
-
-  const removeFromCart = (id) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const clearCart = () => setCartItems([]);
 
   const cartCount = Array.isArray(cartItems)
     ? cartItems.reduce((total, item) => total + (item.quantity || 0), 0)
@@ -74,8 +76,6 @@ export function CartProvider({ children }) {
         addToCart,
         increaseQuantity,
         decreaseQuantity,
-        removeFromCart,
-        clearCart,
         cartCount,
       }}
     >
@@ -85,17 +85,5 @@ export function CartProvider({ children }) {
 }
 
 export function useCart() {
-  const context = useContext(CartContext);
-  if (!context) {
-    return {
-      cartItems: [],
-      cartCount: 0,
-      addToCart: () => {},
-      increaseQuantity: () => {},
-      decreaseQuantity: () => {},
-      removeFromCart: () => {},
-      clearCart: () => {},
-    };
-  }
-  return context;
-}
+  return useContext(CartContext);
+    }
