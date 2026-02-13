@@ -20,7 +20,7 @@ export default function Cart() {
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-8">
         <h2 className="text-3xl font-bold mb-6">Your Cart</h2>
 
-        {cartItems.length === 0 ? (
+        {(cartItems || []).length === 0 ? (
           <p className="text-gray-500 text-lg">
             Your cart is empty. Start adding some books 📚
           </p>
