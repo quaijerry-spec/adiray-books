@@ -4,20 +4,21 @@ import books from "../books";
 export default function Home() {
   const [search, setSearch] = useState("");
 
-  const normalize = str =>
+  const normalize = (str) =>
     (str || "")
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/[^a-z0-9 ]/g, "");
 
-  const filteredBooks = (books || []).filter(book =>
+  const filteredBooks = books.filter((book) =>
     normalize(book.title).includes(normalize(search))
   );
 
   return (
     <div className="pt-32 bg-gray-100 min-h-screen">
-      {/* HERO */}
+
+      {/* HERO SECTION */}
       <section
         className="relative h-[500px] bg-cover bg-center flex items-center"
         style={{ backgroundImage: "url('/hero-bg.jpg')" }}
@@ -28,13 +29,10 @@ export default function Home() {
           <p className="text-lg mb-8 max-w-xl">
             Discover your next great read from our curated collection.
           </p>
-          <button className="bg-yellow-400 text-black px-6 py-3 rounded-full font-semibold hover:scale-105 transition">
-            Browse Books
-          </button>
         </div>
       </section>
 
-      {/* BOOKS */}
+      {/* BOOK SECTION */}
       <section className="max-w-6xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-bold mb-8">Our Collection</h2>
 
@@ -47,7 +45,7 @@ export default function Home() {
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {(filteredBooks || []).map(book => (
+          {filteredBooks.map((book) => (
             <div
               key={book.id}
               className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition"
@@ -70,4 +68,4 @@ export default function Home() {
       </section>
     </div>
   );
-}
+              }
