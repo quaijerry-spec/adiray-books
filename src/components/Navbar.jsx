@@ -8,13 +8,13 @@ export default function Navbar() {
 
   return (
     <div className="fixed top-6 left-0 right-0 flex justify-center z-50">
-      <nav className="w-[90%] max-w-4xl bg-gray-700 rounded-full px-8 py-4 flex items-center justify-between shadow-xl">
+      <nav className="w-[92%] max-w-5xl bg-white/10 backdrop-blur-lg border border-white/20 rounded-full px-10 py-4 flex items-center justify-between shadow-2xl">
 
         <Link to="/" className="flex items-center gap-3">
           <img src="/logo.png" className="w-10 h-10 rounded" />
-          <span className="text-yellow-400 font-bold text-lg">
-            AdiRay Books
-          </span>
+          <span className="text-yellow-400 font-extrabold text-xl tracking-wide">
+  AdiRay Books
+</span>
         </Link>
 
         <Link to="/cart" className="relative text-white">
