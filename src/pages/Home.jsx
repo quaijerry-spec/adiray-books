@@ -1,5 +1,5 @@
 import { useState } from "react";
-import books from "../books"; // keep your 71-book array here
+import books from "../books";
 import { useCart } from "../context/CartContext";
 
 export default function Home() {
@@ -83,9 +83,12 @@ export default function Home() {
       ${book.price}
     </p>
 
-    <button className="w-full bg-gray-900 text-white py-3 rounded-full hover:bg-yellow-400 hover:text-black transition duration-300">
-      Add to Cart
-    </button>
+    <button
+  onClick={() => addToCart(book)}
+  className="w-full bg-gray-900 text-white py-3 rounded-full hover:bg-yellow-400 hover:text-black transition duration-300"
+>
+  Add to Cart
+</button>
   </div>
 </div>
           ))}
