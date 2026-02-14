@@ -1,4 +1,3 @@
-// src/context/CartContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext();
@@ -24,6 +23,7 @@ export function CartProvider({ children }) {
     localStorage.setItem("adiray-cart", JSON.stringify(cartItems));
   }, [cartItems]);
 
+  // Add a book to cart
   const addToCart = (book) => {
     if (!book) return;
     setCartItems((prev) => {
@@ -39,6 +39,7 @@ export function CartProvider({ children }) {
     });
   };
 
+  // Increase quantity
   const increaseQuantity = (id) => {
     setCartItems((prev) =>
       prev.map((item) =>
@@ -47,6 +48,7 @@ export function CartProvider({ children }) {
     );
   };
 
+  // Decrease quantity
   const decreaseQuantity = (id) => {
     setCartItems((prev) =>
       prev
@@ -57,18 +59,23 @@ export function CartProvider({ children }) {
     );
   };
 
+  // Remove item
   const removeFromCart = (id) => {
     setCartItems((prev) => prev.filter((item) => item.id !== id));
   };
 
+  // Clear entire cart
   const clearCart = () => setCartItems([]);
 
-  const cartCount = cartItems.reduce((total, item) => total + (item.quantity || 0), 0);
+  // Total quantity in cart
+  const cartCount = Array.isArray(cartItems)
+    ? cartItems.reduce((total, item) => total + (item.quantity || 0), 0)
+    : 0;
 
   return (
     <CartContext.Provider
       value={{
-        cartItems,
+        cartItems: Array.isArray(cartItems) ? cartItems : [],
         addToCart,
         increaseQuantity,
         decreaseQuantity,
@@ -82,7 +89,7 @@ export function CartProvider({ children }) {
   );
 }
 
-// Hook with safe fallback
+// Hook to use cart safely
 export function useCart() {
   return useContext(CartContext) || {
     cartItems: [],
@@ -93,4 +100,4 @@ export function useCart() {
     clearCart: () => {},
     cartCount: 0,
   };
-}
+               }
