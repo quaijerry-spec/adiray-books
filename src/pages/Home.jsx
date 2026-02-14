@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
-import books from "../books"; // Make sure this path is correct
+import books from "../books"; // path to your 71-book array
 
 export default function Home() {
   const [search, setSearch] = useState("");
   const { addToCart } = useCart();
 
-  // Normalize for search
   const normalize = (str) =>
     str
       .toLowerCase()
@@ -20,7 +19,6 @@ export default function Home() {
 
   return (
     <div className="pt-32 bg-gray-100 min-h-screen">
-      {/* HERO SECTION */}
       <section
         className="relative h-[500px] bg-cover bg-center flex items-center"
         style={{ backgroundImage: "url('/hero-bg.jpg')" }}
@@ -34,22 +32,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* COLLECTION */}
       <section className="max-w-6xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-bold mb-8">Our Collection</h2>
+        <input
+          type="text"
+          placeholder="🔍 Search books..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full md:w-96 px-5 py-3 rounded-full shadow-sm border focus:ring-2 focus:ring-yellow-400 focus:outline-none mb-10"
+        />
 
-        {/* SEARCH */}
-        <div className="mb-10">
-          <input
-            type="text"
-            placeholder="🔍 Search books..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full md:w-96 px-5 py-3 rounded-full shadow-sm border focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-          />
-        </div>
-
-        {/* BOOK GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {(filteredBooks || []).map((book) => (
             <div
@@ -61,12 +53,9 @@ export default function Home() {
                 alt={book.title}
                 className="h-60 w-full object-cover"
               />
-
               <div className="p-5">
                 <h3 className="font-semibold text-lg mb-2">{book.title}</h3>
                 <p className="text-yellow-500 font-bold mb-4">${book.price}</p>
-
-                {/* Add to Cart Button */}
                 <button
                   onClick={() => addToCart(book)}
                   className="bg-gray-800 text-white px-4 py-2 rounded-full hover:bg-yellow-400 hover:text-black transition"
