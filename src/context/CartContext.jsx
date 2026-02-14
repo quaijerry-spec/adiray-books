@@ -12,8 +12,8 @@ export function CartProvider({ children }) {
       try {
         const parsed = JSON.parse(savedCart);
         if (Array.isArray(parsed)) setCartItems(parsed);
-      } catch (error) {
-        console.error("Error parsing cart:", error);
+      } catch (err) {
+        console.error("Error parsing cart:", err);
       }
     }
   }, []);
@@ -25,7 +25,6 @@ export function CartProvider({ children }) {
 
   const addToCart = (book) => {
     if (!book) return;
-
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === book.id);
       if (existing) {
@@ -84,8 +83,8 @@ export function CartProvider({ children }) {
   );
 }
 
-// ✅ This is a separate export, NOT nested inside CartProvider
 export function useCart() {
+  // fallback ensures nothing is undefined
   return useContext(CartContext) || {
     cartItems: [],
     addToCart: () => {},
@@ -95,4 +94,4 @@ export function useCart() {
     clearCart: () => {},
     cartCount: 0,
   };
-                 }
+}
