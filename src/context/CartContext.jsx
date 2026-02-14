@@ -3,9 +3,6 @@ import { createContext, useContext, useState, useEffect } from "react";
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
-export function useCart() {
-  return useContext(CartContext) || { cartItems: [], increaseQuantity: () => {}, decreaseQuantity: () => {}, removeFromCart: () => {}, clearCart: () => {}, cartCount: 0 };
-} 
   const [cartItems, setCartItems] = useState([]);
 
   // Load cart from localStorage on mount
@@ -14,9 +11,7 @@ export function useCart() {
     if (savedCart) {
       try {
         const parsed = JSON.parse(savedCart);
-        if (Array.isArray(parsed)) {
-          setCartItems(parsed);
-        }
+        if (Array.isArray(parsed)) setCartItems(parsed);
       } catch (error) {
         console.error("Error parsing cart:", error);
       }
@@ -47,9 +42,7 @@ export function useCart() {
   const increaseQuantity = (id) => {
     setCartItems((prev) =>
       prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: (item.quantity || 1) + 1 }
-          : item
+        item.id === id ? { ...item, quantity: (item.quantity || 1) + 1 } : item
       )
     );
   };
@@ -58,9 +51,7 @@ export function useCart() {
     setCartItems((prev) =>
       prev
         .map((item) =>
-          item.id === id
-            ? { ...item, quantity: (item.quantity || 1) - 1 }
-            : item
+          item.id === id ? { ...item, quantity: (item.quantity || 1) - 1 } : item
         )
         .filter((item) => item.quantity > 0)
     );
@@ -93,6 +84,15 @@ export function useCart() {
   );
 }
 
+// ✅ This is a separate export, NOT nested inside CartProvider
 export function useCart() {
-  return useContext(CartContext);
-}
+  return useContext(CartContext) || {
+    cartItems: [],
+    addToCart: () => {},
+    increaseQuantity: () => {},
+    decreaseQuantity: () => {},
+    removeFromCart: () => {},
+    clearCart: () => {},
+    cartCount: 0,
+  };
+                 }
