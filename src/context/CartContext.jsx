@@ -1,3 +1,4 @@
+// src/context/CartContext.jsx
 import { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext();
@@ -62,14 +63,12 @@ export function CartProvider({ children }) {
 
   const clearCart = () => setCartItems([]);
 
-  const cartCount = Array.isArray(cartItems)
-    ? cartItems.reduce((total, item) => total + (item.quantity || 0), 0)
-    : 0;
+  const cartCount = cartItems.reduce((total, item) => total + (item.quantity || 0), 0);
 
   return (
     <CartContext.Provider
       value={{
-        cartItems: Array.isArray(cartItems) ? cartItems : [],
+        cartItems,
         addToCart,
         increaseQuantity,
         decreaseQuantity,
@@ -83,8 +82,8 @@ export function CartProvider({ children }) {
   );
 }
 
+// Hook with safe fallback
 export function useCart() {
-  // fallback ensures nothing is undefined
   return useContext(CartContext) || {
     cartItems: [],
     addToCart: () => {},
