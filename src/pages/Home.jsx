@@ -18,28 +18,37 @@ export default function Home() {
   );
 
   return (
-    <div className="pt-32 bg-gray-100 min-h-screen">
+    <div className="pt-32 bg-gradient-to-b from-gray-50 to-gray-200 min-h-screen">
 
       {/* HERO SECTION */}
       <section
-        className="relative h-[500px] bg-cover bg-center flex items-center"
-        style={{ backgroundImage: "url('/hero-bg.jpg')" }}
-      >
-        <div className="absolute inset-0 bg-black/60"></div>
-        <div className="relative z-10 max-w-4xl mx-auto px-6 text-white">
-          <h1 className="text-5xl font-bold mb-6">Read Learn Grow</h1>
-          <p className="text-lg mb-8 max-w-xl">
-            Discover your next great read from our curated collection.
-          </p>
-          <button className="bg-yellow-400 text-black px-6 py-3 rounded-full font-semibold hover:scale-105 transition">
-            Browse Books
-          </button>
-        </div>
-      </section>
+  className="relative h-[85vh] bg-cover bg-center flex items-center"
+  style={{ backgroundImage: "url('/hero-bg.jpg')" }}
+>
+  <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40"></div>
+
+  <div className="relative z-10 max-w-5xl mx-auto px-6 text-white">
+    <h1 className="text-6xl md:text-7xl font-extrabold leading-tight mb-6">
+      Discover Books That <br />
+      <span className="text-yellow-400">Shape Your Future</span>
+    </h1>
+
+    <p className="text-lg md:text-xl text-gray-300 max-w-2xl mb-8">
+      Curated knowledge. Timeless stories. Personal growth.
+      Elevate your mind with every page.
+    </p>
+
+    <button className="bg-yellow-400 text-black px-8 py-4 rounded-full font-semibold text-lg hover:scale-105 transition duration-300 shadow-lg">
+      Explore Collection
+    </button>
+  </div>
+</section>
 
       {/* COLLECTION SECTION */}
       <section className="max-w-6xl mx-auto px-6 py-16">
-        <h2 className="text-3xl font-bold mb-8">Our Collection</h2>
+        <h2 className="text-4xl font-extrabold mb-12 text-gray-800">
+  Featured Collection
+</h2>
 
         <div className="mb-10">
           <input
@@ -54,25 +63,31 @@ export default function Home() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {filteredBooks.map((book) => (
             <div
-              key={book.id}
-              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition"
-            >
-              <img
-                src={book.image}
-                alt={book.title}
-                className="h-60 w-full object-cover"
-              />
-              <div className="p-5">
-                <h3 className="font-semibold text-lg mb-2">{book.title}</h3>
-                <p className="text-yellow-500 font-bold mb-4">${book.price}</p>
-                <button
-                  onClick={() => addToCart(book)}
-                  className="bg-gray-800 text-white px-4 py-2 rounded-full hover:bg-yellow-400 hover:text-black transition"
-                >
-                  Add to Cart
-                </button>
-              </div>
-            </div>
+  key={book.id}
+  className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-500 hover:-translate-y-2"
+>
+  <div className="overflow-hidden">
+    <img
+      src={book.image}
+      alt={book.title}
+      className="h-72 w-full object-cover group-hover:scale-110 transition duration-500"
+    />
+  </div>
+
+  <div className="p-6">
+    <h3 className="font-semibold text-lg mb-2 text-gray-800">
+      {book.title}
+    </h3>
+
+    <p className="text-yellow-500 font-bold text-xl mb-4">
+      ${book.price}
+    </p>
+
+    <button className="w-full bg-gray-900 text-white py-3 rounded-full hover:bg-yellow-400 hover:text-black transition duration-300">
+      Add to Cart
+    </button>
+  </div>
+</div>
           ))}
         </div>
       </section>
