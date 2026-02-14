@@ -11,7 +11,10 @@ export default function Cart() {
   } = useCart();
 
   const totalPrice = Array.isArray(cartItems)
-    ? cartItems.reduce((total, item) => total + (item.price || 0) * (item.quantity || 0), 0)
+    ? cartItems.reduce(
+        (total, item) => total + (item.price || 0) * (item.quantity || 0),
+        0
+      )
     : 0;
 
   return (
@@ -26,7 +29,10 @@ export default function Cart() {
         ) : (
           <>
             {cartItems.map((item) => (
-              <div key={item.id} className="flex justify-between items-center border-b py-4">
+              <div
+                key={item.id}
+                className="flex justify-between items-center border-b py-4"
+              >
                 <div>
                   <h3 className="font-semibold">{item.title}</h3>
                   <p className="text-gray-500">${item.price}</p>
