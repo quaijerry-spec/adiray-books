@@ -1,6 +1,6 @@
 import { useState } from "react";
+import books from "../books"; // keep your 71-book array here
 import { useCart } from "../context/CartContext";
-import books from "../books"; // path to your 71-book array
 
 export default function Home() {
   const [search, setSearch] = useState("");
@@ -19,6 +19,8 @@ export default function Home() {
 
   return (
     <div className="pt-32 bg-gray-100 min-h-screen">
+
+      {/* HERO SECTION */}
       <section
         className="relative h-[500px] bg-cover bg-center flex items-center"
         style={{ backgroundImage: "url('/hero-bg.jpg')" }}
@@ -29,21 +31,28 @@ export default function Home() {
           <p className="text-lg mb-8 max-w-xl">
             Discover your next great read from our curated collection.
           </p>
+          <button className="bg-yellow-400 text-black px-6 py-3 rounded-full font-semibold hover:scale-105 transition">
+            Browse Books
+          </button>
         </div>
       </section>
 
+      {/* COLLECTION SECTION */}
       <section className="max-w-6xl mx-auto px-6 py-16">
         <h2 className="text-3xl font-bold mb-8">Our Collection</h2>
-        <input
-          type="text"
-          placeholder="🔍 Search books..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-96 px-5 py-3 rounded-full shadow-sm border focus:ring-2 focus:ring-yellow-400 focus:outline-none mb-10"
-        />
+
+        <div className="mb-10">
+          <input
+            type="text"
+            placeholder="🔍 Search books..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full md:w-96 px-5 py-3 rounded-full shadow-sm border focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+          />
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {(filteredBooks || []).map((book) => (
+          {filteredBooks.map((book) => (
             <div
               key={book.id}
               className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-xl transition"
