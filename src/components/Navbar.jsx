@@ -45,7 +45,7 @@ export default function Navbar({ search, setSearch }) {
 
             {/* Brand */}
             <span
-              className={`text-yellow-400 font-extrabold transition-all duration-500 ${
+              className={`text-orange-500 font-extrabold transition-all duration-500 ${
                 scrolled ? "text-base" : "text-lg"
               }`}
             >
