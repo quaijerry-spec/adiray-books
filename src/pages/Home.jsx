@@ -16,7 +16,7 @@ export default function Home({ search }) {
   );
 
   return (
-    <div className="pt-32 bg-gradient-to-b from-gray-50 to-gray-200 min-h-screen">
+  <div className="pt-40 bg-gradient-to-b from-gray-50 to-gray-200 min-h-screen">
 
       {/* HERO SECTION */}
       <section
