@@ -34,10 +34,19 @@ export default function Navbar({ search, setSearch }) {
   {/* Top Row (Logo + Cart) */}
   <div className="flex items-center justify-between w-full md:w-auto">
     <Link to="/" className="flex items-center gap-3">
-      <img src="/logo.png" className="w-10 h-10 rounded" />
-      <span className="text-yellow-400 font-extrabold text-lg">
-        AdiRay Books
-      </span>
+      <img
+  src="/logo.png"
+  className={`rounded transition-all duration-300 ${
+    scrolled ? "w-8 h-8" : "w-10 h-10"
+  }`}
+/>
+      <span
+  className={`text-yellow-400 font-extrabold transition-all duration-300 ${
+    scrolled ? "text-base" : "text-lg"
+  }`}
+>
+  AdiRay Books
+</span>
     </Link>
 
     <Link to="/cart" className="relative text-white">
