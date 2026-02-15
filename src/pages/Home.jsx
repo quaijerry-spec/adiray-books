@@ -48,17 +48,7 @@ export default function Home({ search }) {
         <h2 className="text-4xl font-extrabold mb-12 text-gray-800">
   Featured Collection
 </h2>
-
-        <div className="mb-10">
-          <input
-            type="text"
-            placeholder="🔍 Search books..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full md:w-96 px-5 py-3 rounded-full shadow-sm border focus:ring-2 focus:ring-yellow-400 focus:outline-none"
-          />
-        </div>
-
+        
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
           {filteredBooks.map((book) => (
             <div
