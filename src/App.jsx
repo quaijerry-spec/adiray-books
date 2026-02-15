@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
+import Account from "./pages/Account";
 import { CartProvider } from "./context/CartContext";
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Home search={search} />} />
             <Route path="/cart" element={<Cart />} />
+            <Route path="/account" element={<Account />} />
           </Routes>
         </motion.div>
       </AnimatePresence>
