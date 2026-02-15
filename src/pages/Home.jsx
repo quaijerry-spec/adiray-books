@@ -74,6 +74,7 @@ useEffect(() => {
             <div
   key={book.id}
   className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 hover:-translate-y-2 opacity-0 animate-fadeInUp"
+>
   <div className="overflow-hidden">
     <img
       src={book.image}
@@ -92,11 +93,11 @@ useEffect(() => {
     </p>
 
     <button
-  onClick={() => addToCart(book)}
-  className="w-full bg-gray-900 text-white py-3 rounded-full hover:bg-yellow-400 hover:text-black transition duration-300"
->
-  Add to Cart
-</button>
+      onClick={() => addToCart(book)}
+      className="w-full bg-gray-900 text-white py-3 rounded-full hover:bg-yellow-400 hover:text-black transition duration-300"
+    >
+      Add to Cart
+    </button>
   </div>
 </div>
           ))}
