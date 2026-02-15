@@ -33,7 +33,10 @@ useEffect(() => {
       {/* HERO SECTION */}
       <section
   className="relative h-[85vh] bg-cover bg-center flex items-center"
-  style={{ backgroundImage: "url('/hero-bg.jpg')" }}
+  style={{
+    backgroundImage: "url('/hero-bg.jpg')",
+    backgroundPositionY: `${scrollY * 0.5}px`
+  }}
 >
   <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40"></div>
 
@@ -70,8 +73,7 @@ useEffect(() => {
           {filteredBooks.map((book) => (
             <div
   key={book.id}
-  className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-500 hover:-translate-y-2"
->
+  className="group bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-700 hover:-translate-y-2 opacity-0 animate-fadeInUp"
   <div className="overflow-hidden">
     <img
       src={book.image}
