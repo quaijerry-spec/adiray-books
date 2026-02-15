@@ -2,8 +2,7 @@ import { useState } from "react";
 import books from "../books";
 import { useCart } from "../context/CartContext";
 
-export default function Home() {
-  const [search, setSearch] = useState("");
+export default function Home({ search }) {
   const { addToCart } = useCart();
 
   const normalize = (str) =>
