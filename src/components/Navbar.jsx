@@ -4,8 +4,11 @@ import { useState, useEffect } from "react";
 import { UserIcon } from "@heroicons/react/24/outline";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 
-export default function Navbar({ search, setSearch }) {
-  const { cartCount } = useCart();
+
+export default function Navbar() {
+   ...
+   return ( ... );
+}  const { cartCount } = useCart();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -98,4 +101,5 @@ export default function Navbar({ search, setSearch }) {
       </div>
     </nav>
   </div>
-);
+  );
+}
