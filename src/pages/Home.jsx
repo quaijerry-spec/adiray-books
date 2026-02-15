@@ -1,4 +1,5 @@
 import books from "../books";
+import { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
 
 export default function Home({ search }) {
@@ -11,6 +12,17 @@ export default function Home({ search }) {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9 ]/g, "");
 
+  const [scrollY, setScrollY] = useState(0);
+
+useEffect(() => {
+  const handleScroll = () => {
+    setScrollY(window.scrollY);
+  };
+
+  window.addEventListener("scroll", handleScroll);
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
+  
   const filteredBooks = (books || []).filter((book) =>
     normalize(book.title).includes(normalize(search))
   );
@@ -25,7 +37,13 @@ export default function Home({ search }) {
 >
   <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40"></div>
 
-  <div className="relative z-10 max-w-5xl mx-auto px-6 text-white">
+  <div
+  className="relative z-10 max-w-5xl mx-auto px-6 text-white transition-all duration-300"
+  style={{
+  opacity: Math.max(1 - scrollY / 400, 0),
+  transform: `translateY(-${scrollY / 6}px)`
+}}
+>
     <h1 className="text-6xl md:text-7xl font-extrabold leading-tight mb-6">
       Discover Books That <br />
       <span className="text-yellow-400">Shape Your Future</span>
