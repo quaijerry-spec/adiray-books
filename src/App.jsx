@@ -30,6 +30,11 @@ export default function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/account" element={<Account />} />
           </Routes>
+         </>
+  );
+}
+
+export default App;
         </motion.div>
       </AnimatePresence>
 
