@@ -1,14 +1,35 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useState, useEffect } from "react";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 
 export default function Navbar({ search, setSearch }) {
   const cartData = useCart() || {};
   const cartCount = cartData.cartCount || 0;
+  const [scrolled, setScrolled] = useState(false);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   return (
-    <div className="fixed top-6 left-0 right-0 flex justify-center z-50">
-      <nav className="w-[95%] max-w-6xl bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-2xl">
+    <div
+  className={`fixed top-6 left-0 right-0 flex justify-center z-50 transition-all duration-300 ${
+    scrolled ? "top-3" : "top-6"
+  }`}
+>
+      <nav
+  className={`w-[95%] max-w-6xl bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-2xl flex flex-col md:flex-row md:items-center md:justify-between gap-4 transition-all duration-300 ${
+    scrolled
+      ? "px-6 py-2"
+      : "px-8 py-4"
+  }`}
+>
 
   {/* Top Row (Logo + Cart) */}
   <div className="flex items-center justify-between w-full md:w-auto">
