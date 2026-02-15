@@ -57,7 +57,7 @@ useEffect(() => {
       Elevate your mind with every page.
     </p>
 
-    <button className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-8 py-4 rounded-full font-semibold text-lg hover:scale-105 transition duration-300 shadow-lg"
+    <button className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-8 py-4 rounded-full font-semibold text-lg hover:scale-105 transition duration-300 shadow-lg">
       Explore Collection
     </button>
   </div>
