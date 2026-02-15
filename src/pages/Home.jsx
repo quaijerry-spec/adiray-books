@@ -57,7 +57,7 @@ useEffect(() => {
       Elevate your mind with every page.
     </p>
 
-    <button className="bg-gradient-to-r from-yellow-400 to-amber-500 text-white px-8 py-4 rounded-full font-semibold text-lg hover:scale-105 transition duration-300 shadow-lg">
+    <button className="bg-gradient-to-r from-yellow-500 to-amber-500 text-white px-8 py-4 rounded-full font-semibold text-lg hover:scale-105 transition duration-300 shadow-lg">
       Explore Collection
     </button>
   </div>
@@ -88,13 +88,13 @@ useEffect(() => {
       {book.title}
     </h3>
 
-    <p className="text-orange-500 font-bold text-xl mb-4">
+    <p className="text-or-yellow-500 font-bold text-xl mb-4">
       ${book.price}
     </p>
 
     <button
       onClick={() => addToCart(book)}
-      className="w-full bg-gradient-to-r from-orange-500 to-amber-500 text-white py-3 rounded-full hover:scale-105 transition duration-300"
+      className="w-full bg-gradient-to-r from-yellow-500 to-amber-500 text-white py-3 rounded-full hover:scale-105 transition duration-300"
     >
       Add to Cart
     </button>
