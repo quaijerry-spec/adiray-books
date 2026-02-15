@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useState, useEffect } from "react";
-import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import { ShoppingCartIcon, UserIcon } from "@heroicons/react/24/outline";
 
 export default function Navbar({ search, setSearch }) {
   const { cartCount } = useCart();
@@ -11,7 +11,6 @@ export default function Navbar({ search, setSearch }) {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -48,15 +47,20 @@ export default function Navbar({ search, setSearch }) {
             </span>
           </Link>
 
-          {/* Cart */}
-          <Link to="/cart" className="relative text-white md:hidden">
-            <ShoppingCartIcon className="w-7 h-7" />
-            {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs px-2 rounded-full animate-pulse">
-                {cartCount}
-              </span>
-            )}
-          </Link>
+          {/* Mobile Cart & Account */}
+          <div className="flex md:hidden items-center gap-4">
+            <Link to="/cart" className="relative text-white">
+              <ShoppingCartIcon className="w-7 h-7" />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs px-2 rounded-full animate-pulse">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+            <Link to="/account" className="text-white">
+              <UserIcon className="w-7 h-7 hover:scale-110 transition-transform duration-300" />
+            </Link>
+          </div>
         </div>
 
         {/* Search */}
@@ -68,7 +72,7 @@ export default function Navbar({ search, setSearch }) {
           className="w-full md:w-96 px-5 py-2 rounded-full bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:bg-white/30 transition-all duration-300"
         />
 
-        {/* Desktop Cart */}
+        {/* Desktop Cart & Account */}
         <div className="hidden md:flex items-center gap-6">
           <Link to="/cart" className="relative text-white">
             <ShoppingCartIcon className="w-7 h-7 hover:scale-110 transition-transform duration-300" />
@@ -77,6 +81,9 @@ export default function Navbar({ search, setSearch }) {
                 {cartCount}
               </span>
             )}
+          </Link>
+          <Link to="/account" className="text-white">
+            <UserIcon className="w-7 h-7 hover:scale-110 transition-transform duration-300" />
           </Link>
         </div>
       </nav>
