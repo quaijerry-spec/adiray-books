@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { Routes, Route } from "react-router-dom";
@@ -7,11 +8,14 @@ import Checkout from "./pages/Checkout";
 import { CartProvider } from "./context/CartContext";
 
 export default function App() {
+  const [search, setSearch] = useState("");
+
   return (
     <CartProvider>
-      <Navbar />
+      <Navbar search={search} setSearch={setSearch} />
+
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home search={search} />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
       </Routes>
