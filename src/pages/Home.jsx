@@ -49,7 +49,7 @@ useEffect(() => {
 >
     <h1 className="text-6xl md:text-7xl font-extrabold leading-tight mb-6">
       Discover Books That <br />
-      <span className="text-orange-500">Shape Your Future</span>
+      <span className="text-yellow-400">Shape Your Future</span>
     </h1>
 
     <p className="text-lg md:text-xl text-gray-300 max-w-2xl mb-8">
@@ -57,7 +57,7 @@ useEffect(() => {
       Elevate your mind with every page.
     </p>
 
-    <button className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-8 py-4 rounded-full font-semibold text-lg hover:scale-105 transition duration-300 shadow-lg">
+    <button className="bg-gradient-to-r from-yellow-400 to-amber-500 text-white px-8 py-4 rounded-full font-semibold text-lg hover:scale-105 transition duration-300 shadow-lg">
       Explore Collection
     </button>
   </div>
