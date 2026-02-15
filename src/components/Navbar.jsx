@@ -60,9 +60,9 @@ export default function Navbar({ search, setSearch }) {
           <Link to="/cart" className="relative text-white">
             <ShoppingCartIcon className="w-7 h-7 transition-transform duration-300 hover:scale-110" />
             {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs px-2 rounded-full">
-                {cartCount}
-              </span>
+              <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs px-2 rounded-full animate-pulse">
+  {cartCount}
+</span>
             )}
           </Link>
         </div>
