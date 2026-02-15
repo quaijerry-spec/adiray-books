@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useState, useEffect } from "react";
+import { UserIcon } from "@heroicons/react/24/outline";
 import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 
 export default function Navbar({ search, setSearch }) {
@@ -56,16 +57,28 @@ export default function Navbar({ search, setSearch }) {
             <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-yellow-400 transition-all duration-300 group-hover:w-full"></span>
           </Link>
 
-          {/* Cart */}
-          <Link to="/cart" className="relative text-white">
-            <ShoppingCartIcon className="w-7 h-7 transition-transform duration-300 hover:scale-110" />
-            {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs px-2 rounded-full animate-pulse">
-  {cartCount}
-</span>
-            )}
-          </Link>
-        </div>
+        {/* Right Side Icons */}
+<div className="flex items-center gap-4">
+
+  {/* Account */}
+  <Link 
+    to="/account" 
+    className="relative text-white transition-transform duration-300 hover:scale-110"
+  >
+    <UserIcon className="w-7 h-7" />
+  </Link>
+
+  {/* Cart */}
+  <Link to="/cart" className="relative text-white transition-transform duration-300 hover:scale-110">
+    <ShoppingCartIcon className="w-7 h-7" />
+    {cartCount > 0 && (
+      <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs px-2 rounded-full animate-pulse">
+        {cartCount}
+      </span>
+    )}
+  </Link>
+
+</div>  
 
         {/* Search */}
         <input
