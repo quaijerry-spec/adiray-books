@@ -41,7 +41,7 @@ export default function Account() {
             <p className="text-gray-600 mb-4">You are not logged in.</p>
             <button
               onClick={loginWithGoogle}
-              className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
+              className="px-6 py-3 bg-yellow-500 text-white rounded-full hover:bg-orange-600 transition"
             >
               Login with Google
             </button>
@@ -51,10 +51,10 @@ export default function Account() {
             <p className="text-gray-600 mb-4">Welcome, {user.displayName}</p>
 
             <div className="flex flex-col md:flex-row gap-4">
-              <button className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition">
+              <button className="px-6 py-3 bg-yellow-500 text-white rounded-full hover:bg-orange-600 transition">
                 Profile
               </button>
-              <button className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition">
+              <button className="px-6 py-3 bg-yellow-500 text-white rounded-full hover:bg-orange-600 transition">
                 Orders
               </button>
               <button
