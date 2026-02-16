@@ -37,6 +37,4 @@ export default function App() {
     </CartProvider>
   );
 }
-
-export default App;
           
