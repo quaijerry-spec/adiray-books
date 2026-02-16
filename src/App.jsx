@@ -7,6 +7,10 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Cart from "./pages/Cart";
 import Account from "./pages/Account";
+import Login from "./pages/Login";
+import Orders from "./pages/Orders";
+import Admin from "./pages/Admin";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { CartProvider } from "./context/CartContext";
 
 export default function App() {
@@ -28,7 +32,31 @@ export default function App() {
           <Routes location={location} key={location.pathname}>
             <Route path="/" element={<Home search={search} />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/account" element={<Account />} />
+            <Route path="/login" element={<Login />} />
+<Route
+  path="/account"
+  element={
+    <ProtectedRoute>
+      <Account />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/orders"
+  element={
+    <ProtectedRoute>
+      <Orders />
+    </ProtectedRoute>
+  }
+/>
+<Route
+  path="/admin"
+  element={
+    <ProtectedRoute>
+      <Admin />
+    </ProtectedRoute>
+  }
+/>
           </Routes>
           </motion.div>
       </AnimatePresence>
