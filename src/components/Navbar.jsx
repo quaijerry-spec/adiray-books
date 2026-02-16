@@ -1,19 +1,91 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
 import { ShoppingCartIcon, UserIcon } from "@heroicons/react/24/outline";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar({ search, setSearch }) {
   const { cartCount } = useCart();
+  const { user, logout } = useAuth();
+
   const [scrolled, setScrolled] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const AccountIcon = (
+    <div className="relative">
+      <UserIcon
+        onClick={() => setDropdownOpen(!dropdownOpen)}
+        className="w-7 h-7 text-white cursor-pointer hover:scale-110 transition-transform duration-300"
+      />
+
+      <AnimatePresence>
+        {dropdownOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.2 }}
+            className="absolute right-0 mt-3 w-44 bg-white rounded-xl shadow-xl overflow-hidden z-50"
+          >
+            {!user ? (
+              <Link
+                to="/login"
+                className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
+                onClick={() => setDropdownOpen(false)}
+              >
+                Login
+              </Link>
+            ) : (
+              <>
+                <Link
+                  to="/account"
+                  className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  Profile
+                </Link>
+
+                <Link
+                  to="/orders"
+                  className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  Orders
+                </Link>
+
+                {user.role === "admin" && (
+                  <Link
+                    to="/admin"
+                    className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
+                    onClick={() => setDropdownOpen(false)}
+                  >
+                    Admin Dashboard
+                  </Link>
+                )}
+
+                <button
+                  onClick={() => {
+                    logout();
+                    setDropdownOpen(false);
+                  }}
+                  className="w-full text-left px-4 py-3 text-red-500 hover:bg-gray-100"
+                >
+                  Logout
+                </button>
+              </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 
   return (
     <div
@@ -39,7 +111,7 @@ export default function Navbar({ search, setSearch }) {
               alt="Logo"
             />
             <span
-              className={`text-yellow-500 font-extrabold transition-all duration-500 ${
+              className={`text-orange-500 font-extrabold transition-all duration-500 ${
                 scrolled ? "text-base" : "text-lg"
               }`}
             >
@@ -47,19 +119,17 @@ export default function Navbar({ search, setSearch }) {
             </span>
           </Link>
 
-          {/* Mobile Cart & Account */}
+          {/* Mobile Icons */}
           <div className="flex md:hidden items-center gap-4">
             <Link to="/cart" className="relative text-white">
               <ShoppingCartIcon className="w-7 h-7" />
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs px-2 rounded-full animate-pulse">
+                <span className="absolute -top-2 -right-2 bg-orange-400 text-black text-xs px-2 rounded-full animate-pulse">
                   {cartCount}
                 </span>
               )}
             </Link>
-            <Link to="/account" className="text-white">
-              <UserIcon className="w-7 h-7 hover:scale-110 transition-transform duration-300" />
-            </Link>
+            {AccountIcon}
           </div>
         </div>
 
@@ -69,22 +139,20 @@ export default function Navbar({ search, setSearch }) {
           placeholder="Search books..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full md:w-96 px-5 py-2 rounded-full bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:bg-white/30 transition-all duration-300"
+          className="w-full md:w-96 px-5 py-2 rounded-full bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:bg-white/30 transition-all duration-300"
         />
 
-        {/* Desktop Cart & Account */}
+        {/* Desktop Icons */}
         <div className="hidden md:flex items-center gap-6">
           <Link to="/cart" className="relative text-white">
             <ShoppingCartIcon className="w-7 h-7 hover:scale-110 transition-transform duration-300" />
             {cartCount > 0 && (
-              <span className="absolute -top-2 -right-2 bg-yellow-400 text-black text-xs px-2 rounded-full animate-pulse">
+              <span className="absolute -top-2 -right-2 bg-orange-400 text-black text-xs px-2 rounded-full animate-pulse">
                 {cartCount}
               </span>
             )}
           </Link>
-          <Link to="/account" className="text-white">
-            <UserIcon className="w-7 h-7 hover:scale-110 transition-transform duration-300" />
-          </Link>
+          {AccountIcon}
         </div>
       </nav>
     </div>
