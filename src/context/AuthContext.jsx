@@ -9,18 +9,9 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   sendEmailVerification,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
-import { sendPasswordResetEmail } from "firebase/auth";
-
-const resetPassword = async (email) => {
-  await sendPasswordResetEmail(auth, email);
-};
-const resendVerification = async () => {
-  if (auth.currentUser) {
-    await sendEmailVerification(auth.currentUser);
-  }
-};
 
 const AuthContext = createContext();
 
@@ -28,19 +19,18 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Track Auth State
+  // 🔹 Track auth state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         const docRef = doc(db, "users", currentUser.uid);
         const docSnap = await getDoc(docRef);
-
         const role = docSnap.exists() ? docSnap.data().role : "user";
 
         setUser({
           uid: currentUser.uid,
           email: currentUser.email,
-          displayName: currentUser.displayName,
+          displayName: currentUser.displayName || "",
           role,
           emailVerified: currentUser.emailVerified,
           provider: currentUser.providerData[0]?.providerId,
@@ -48,14 +38,13 @@ export const AuthProvider = ({ children }) => {
       } else {
         setUser(null);
       }
-
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
-  // 🔹 Signup
+  // 🔹 Signup (email/password)
   const signup = async (email, password) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const newUser = userCredential.user;
@@ -71,23 +60,47 @@ export const AuthProvider = ({ children }) => {
       createdAt: new Date(),
     });
 
+    // Update context with unverified user
+    setUser({
+      uid: newUser.uid,
+      email: newUser.email,
+      displayName: newUser.displayName || "",
+      role: "user",
+      emailVerified: newUser.emailVerified,
+      provider: newUser.providerData[0]?.providerId,
+    });
+
     return newUser;
   };
 
-  // 🔹 Login
+  // 🔹 Login (email/password)
   const login = async (email, password) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const loggedInUser = userCredential.user;
 
+    // Block unverified users
     if (!loggedInUser.emailVerified) {
       await signOut(auth);
       throw new Error("Please verify your email before logging in.");
     }
 
+    const docRef = doc(db, "users", loggedInUser.uid);
+    const docSnap = await getDoc(docRef);
+    const role = docSnap.exists() ? docSnap.data().role : "user";
+
+    setUser({
+      uid: loggedInUser.uid,
+      email: loggedInUser.email,
+      displayName: loggedInUser.displayName || "",
+      role,
+      emailVerified: loggedInUser.emailVerified,
+      provider: loggedInUser.providerData[0]?.providerId,
+    });
+
     return loggedInUser;
   };
 
-  // 🔹 Google Login
+  // 🔹 Google login
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
@@ -100,10 +113,19 @@ export const AuthProvider = ({ children }) => {
       await setDoc(docRef, {
         role: "user",
         email: googleUser.email,
-        displayName: googleUser.displayName,
+        displayName: googleUser.displayName || "",
         createdAt: new Date(),
       });
     }
+
+    setUser({
+      uid: googleUser.uid,
+      email: googleUser.email,
+      displayName: googleUser.displayName || "",
+      role: docSnap.exists() ? docSnap.data().role : "user",
+      emailVerified: googleUser.emailVerified,
+      provider: googleUser.providerData[0]?.providerId,
+    });
 
     return googleUser;
   };
@@ -114,19 +136,31 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  // 🔹 Resend verification email
+  const resendVerification = async () => {
+    if (auth.currentUser && !auth.currentUser.emailVerified) {
+      await sendEmailVerification(auth.currentUser);
+    }
+  };
+
+  // 🔹 Reset password
+  const resetPassword = async (email) => {
+    await sendPasswordResetEmail(auth, email);
+  };
+
   return (
     <AuthContext.Provider
-  value={{
-    user,
-    loading,
-    signup,
-    login,
-    loginWithGoogle,
-    logout,
-    resendVerification,
-    resetPassword,
-  }}
->
+      value={{
+        user,
+        loading,
+        signup,
+        login,
+        loginWithGoogle,
+        logout,
+        resendVerification,
+        resetPassword,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
