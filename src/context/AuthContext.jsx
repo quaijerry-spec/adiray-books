@@ -8,6 +8,7 @@ import {
   signOut,
   GoogleAuthProvider,
   signInWithPopup,
+  sendEmailVerification,
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
@@ -15,11 +16,18 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // tracks auth initialization
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
+        // If email not verified, treat as null (except for Google sign-in)
+        if (!currentUser.emailVerified && !currentUser.providerData.some(p => p.providerId === "google.com")) {
+          setUser(null);
+          setLoading(false);
+          return;
+        }
+
         // Fetch role from Firestore
         const docRef = doc(db, "users", currentUser.uid);
         const docSnap = await getDoc(docRef);
@@ -36,6 +44,7 @@ export const AuthProvider = ({ children }) => {
       }
       setLoading(false);
     });
+
     return () => unsubscribe();
   }, []);
 
@@ -44,26 +53,29 @@ export const AuthProvider = ({ children }) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const newUser = userCredential.user;
 
+    // Send verification email
+    await sendEmailVerification(newUser);
+
     // Save user role to Firestore
     await setDoc(doc(db, "users", newUser.uid), {
-      role: "user", // default role
+      role: "user", // default
       email: newUser.email,
       displayName: newUser.displayName || "",
       createdAt: new Date(),
     });
 
-    setUser({
-      uid: newUser.uid,
-      email: newUser.email,
-      displayName: newUser.displayName || "",
-      role: "user",
-    });
+    return newUser;
   };
 
   // Email/password login
   const login = async (email, password) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const loggedInUser = userCredential.user;
+
+    if (!loggedInUser.emailVerified) {
+      await signOut(auth);
+      throw new Error("Please verify your email before logging in.");
+    }
 
     // Fetch role from Firestore
     const docRef = doc(db, "users", loggedInUser.uid);
@@ -76,6 +88,8 @@ export const AuthProvider = ({ children }) => {
       displayName: loggedInUser.displayName,
       role,
     });
+
+    return loggedInUser;
   };
 
   // Google login
@@ -84,7 +98,7 @@ export const AuthProvider = ({ children }) => {
     const result = await signInWithPopup(auth, provider);
     const googleUser = result.user;
 
-    // Check if user already exists in Firestore
+    // Check Firestore role
     const docRef = doc(db, "users", googleUser.uid);
     const docSnap = await getDoc(docRef);
 
@@ -103,6 +117,8 @@ export const AuthProvider = ({ children }) => {
       displayName: googleUser.displayName,
       role: docSnap.exists() ? docSnap.data().role : "user",
     });
+
+    return googleUser;
   };
 
   // Logout
