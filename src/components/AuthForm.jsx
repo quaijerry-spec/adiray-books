@@ -3,14 +3,7 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 export default function AuthForm() {
-  const {
-    signup,
-    login,
-    loginWithGoogle,
-    resendVerification,
-    refreshUser,
-  } = useAuth();
-
+  const { signup, login, loginWithGoogle, resendVerification, refreshUser } = useAuth();
   const [mode, setMode] = useState("login"); // login | signup
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,7 +24,7 @@ export default function AuthForm() {
       } else if (mode === "signup") {
         await signup(email, password);
         setMessage(
-          `✅ Account created! We sent a verification email to ${email}. Please verify before logging in.`
+          `✅ Account created! A verification email was sent to ${email}. Please verify before logging in.`
         );
         setVerificationSent(true);
       }
@@ -56,7 +49,7 @@ export default function AuthForm() {
     }
   };
 
-  // 🔹 Resend verification email
+  // 🔹 Handle resend verification email
   const handleResendVerification = async () => {
     setMessage("");
     setLoading(true);
@@ -70,8 +63,8 @@ export default function AuthForm() {
     }
   };
 
-  // 🔹 Check if email verified
-  const handleCheckVerification = async () => {
+  // 🔹 Handle refresh verification status
+  const handleRefreshVerification = async () => {
     setMessage("");
     setLoading(true);
     try {
@@ -90,7 +83,7 @@ export default function AuthForm() {
     }
   };
 
-  // 🔹 Switch login/signup mode
+  // 🔹 Reset form when switching modes
   const toggleMode = (newMode) => {
     setMode(newMode);
     setMessage("");
@@ -108,17 +101,15 @@ export default function AuthForm() {
       {/* Message */}
       {message && (
         <p
-          className={`mb-4 ${
-            message.includes("✅") ? "text-green-600" : "text-red-500"
-          }`}
+          className={`mb-4 ${message.includes("✅") ? "text-green-600" : "text-red-500"}`}
           role="alert"
         >
           {message}
         </p>
       )}
 
-      {/* Google login (only for login mode) */}
-      {mode === "login" && (
+      {/* Google login */}
+      {mode !== "signup" && (
         <button
           onClick={handleGoogleLogin}
           disabled={loading}
@@ -128,7 +119,7 @@ export default function AuthForm() {
         </button>
       )}
 
-      {/* Email/password form (login or signup) */}
+      {/* Email/password form */}
       {!verificationSent && (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
@@ -166,7 +157,7 @@ export default function AuthForm() {
             We sent a verification email to <strong>{email}</strong>. Please click the link in your email to confirm.
           </p>
           <button
-            onClick={handleCheckVerification}
+            onClick={handleRefreshVerification}
             disabled={loading}
             className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
           >
@@ -192,4 +183,4 @@ export default function AuthForm() {
       </div>
     </div>
   );
-        }
+    }
