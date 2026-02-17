@@ -11,6 +11,13 @@ import {
   sendEmailVerification,
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
+import { sendEmailVerification } from "firebase/auth";
+
+const resendVerification = async () => {
+  if (auth.currentUser) {
+    await sendEmailVerification(auth.currentUser);
+  }
+};
 
 const AuthContext = createContext();
 
