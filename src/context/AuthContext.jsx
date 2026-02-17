@@ -103,35 +103,34 @@ export const AuthProvider = ({ children }) => {
 
   // 🔹 Google login
   const loginWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    const googleUser = result.user;
+  const provider = new GoogleAuthProvider();
+  const result = await signInWithPopup(auth, provider);
+  const googleUser = result.user;
 
-    const docRef = doc(db, "users", googleUser.uid);
-    const docSnap = await getDoc(docRef);
-
-    if (!docSnap.exists()) {
-      // New user: create Firestore record
-      await setDoc(docRef, {
-        role: "user",
-        email: googleUser.email,
-        displayName: googleUser.displayName || "",
-        createdAt: new Date(),
-      });
-    }
-
-    // ✅ Set context user state
-    setUser({
-      uid: googleUser.uid,
+  // Check Firestore role
+  const docRef = doc(db, "users", googleUser.uid);
+  const docSnap = await getDoc(docRef);
+  if (!docSnap.exists()) {
+    await setDoc(docRef, {
+      role: "user",
       email: googleUser.email,
       displayName: googleUser.displayName || "",
-      role: docSnap.exists() ? docSnap.data().role : "user",
-      emailVerified: googleUser.emailVerified,
-      provider: googleUser.providerData[0]?.providerId,
+      createdAt: new Date(),
     });
+  }
 
-    return googleUser;
-  };
+  // ✅ Set user state safely
+  setUser({
+    uid: googleUser.uid,
+    email: googleUser.email,
+    displayName: googleUser.displayName || "",
+    role: docSnap.exists() ? docSnap.data().role : "user",
+    emailVerified: googleUser.emailVerified,
+    provider: googleUser.providerData?.[0]?.providerId || "google.com",
+  });
+
+  return googleUser;
+};
 
   // 🔹 Logout
   const logout = async () => {
