@@ -8,20 +8,17 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar({ search, setSearch }) {
   const { cartCount } = useCart();
-  const { user, logout, loading } = useAuth();
-
+  const { user, logout } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Detect scroll for styling
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Account dropdown
-  const AccountMenu = (
+  const AccountDropdown = (
     <div className="relative">
       <UserIcon
         onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -29,7 +26,7 @@ export default function Navbar({ search, setSearch }) {
       />
 
       <AnimatePresence>
-        {dropdownOpen && !loading && (
+        {dropdownOpen && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -43,7 +40,7 @@ export default function Navbar({ search, setSearch }) {
                 className="block px-4 py-3 text-gray-700 hover:bg-gray-100"
                 onClick={() => setDropdownOpen(false)}
               >
-                Login / Sign Up
+                Login / Signup
               </Link>
             ) : (
               <>
@@ -61,6 +58,8 @@ export default function Navbar({ search, setSearch }) {
                 >
                   Orders
                 </Link>
+
+                {/* Only show Admin link if role is admin */}
                 {user.role === "admin" && (
                   <Link
                     to="/admin"
@@ -70,6 +69,7 @@ export default function Navbar({ search, setSearch }) {
                     Admin Dashboard
                   </Link>
                 )}
+
                 <button
                   onClick={() => {
                     logout();
@@ -105,10 +105,10 @@ export default function Navbar({ search, setSearch }) {
           <Link to="/" className="flex items-center gap-3">
             <img
               src="/logo.png"
-              alt="Logo"
               className={`rounded transition-all duration-500 ${
                 scrolled ? "w-8 h-8" : "w-10 h-10"
               }`}
+              alt="Logo"
             />
             <span
               className={`text-orange-500 font-extrabold transition-all duration-500 ${
@@ -119,7 +119,7 @@ export default function Navbar({ search, setSearch }) {
             </span>
           </Link>
 
-          {/* Mobile icons */}
+          {/* Mobile Icons */}
           <div className="flex md:hidden items-center gap-4">
             <Link to="/cart" className="relative text-white">
               <ShoppingCartIcon className="w-7 h-7" />
@@ -129,7 +129,7 @@ export default function Navbar({ search, setSearch }) {
                 </span>
               )}
             </Link>
-            {AccountMenu}
+            {AccountDropdown}
           </div>
         </div>
 
@@ -142,7 +142,7 @@ export default function Navbar({ search, setSearch }) {
           className="w-full md:w-96 px-5 py-2 rounded-full bg-white/20 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:bg-white/30 transition-all duration-300"
         />
 
-        {/* Desktop icons */}
+        {/* Desktop Icons */}
         <div className="hidden md:flex items-center gap-6">
           <Link to="/cart" className="relative text-white">
             <ShoppingCartIcon className="w-7 h-7 hover:scale-110 transition-transform duration-300" />
@@ -152,7 +152,7 @@ export default function Navbar({ search, setSearch }) {
               </span>
             )}
           </Link>
-          {AccountMenu}
+          {AccountDropdown}
         </div>
       </nav>
     </div>
