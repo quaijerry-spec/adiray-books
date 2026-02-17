@@ -3,7 +3,14 @@ import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
 export default function AuthForm() {
-  const { signup, login, loginWithGoogle, resendVerification } = useAuth();
+  const {
+    signup,
+    login,
+    loginWithGoogle,
+    resendVerification,
+    refreshUser,
+  } = useAuth();
+
   const [mode, setMode] = useState("login"); // login | signup
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,7 +31,7 @@ export default function AuthForm() {
       } else if (mode === "signup") {
         await signup(email, password);
         setMessage(
-          "✅ Account created! Please check your email for verification before logging in."
+          `✅ Account created! We sent a verification email to ${email}. Please verify before logging in.`
         );
         setVerificationSent(true);
       }
@@ -49,7 +56,7 @@ export default function AuthForm() {
     }
   };
 
-  // 🔹 Handle resend verification email
+  // 🔹 Resend verification email
   const handleResendVerification = async () => {
     setMessage("");
     setLoading(true);
@@ -63,7 +70,27 @@ export default function AuthForm() {
     }
   };
 
-  // 🔹 Reset form when switching modes
+  // 🔹 Check if email verified
+  const handleCheckVerification = async () => {
+    setMessage("");
+    setLoading(true);
+    try {
+      const verified = await refreshUser();
+      if (verified) {
+        setMessage("✅ Email verified! You can now log in.");
+        setVerificationSent(false);
+        setMode("login");
+      } else {
+        setMessage("⚠️ Email not verified yet. Please check your inbox.");
+      }
+    } catch (err) {
+      setMessage(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 🔹 Switch login/signup mode
   const toggleMode = (newMode) => {
     setMode(newMode);
     setMessage("");
@@ -90,8 +117,8 @@ export default function AuthForm() {
         </p>
       )}
 
-      {/* Google login */}
-      {mode !== "signup" && (
+      {/* Google login (only for login mode) */}
+      {mode === "login" && (
         <button
           onClick={handleGoogleLogin}
           disabled={loading}
@@ -101,7 +128,7 @@ export default function AuthForm() {
         </button>
       )}
 
-      {/* Email/password form */}
+      {/* Email/password form (login or signup) */}
       {!verificationSent && (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
@@ -132,41 +159,28 @@ export default function AuthForm() {
         </form>
       )}
 
-      {/* Resend verification after signup */}
+      {/* Verification pending view */}
       {verificationSent && (
-  <div className="flex flex-col items-center gap-4 mt-4">
-    <p className="text-gray-700 text-center">
-      We sent a verification email to <strong>{email}</strong>. Please click the link in your email to confirm.
-    </p>
-
-    <button
-      onClick={async () => {
-        setLoading(true);
-        const verified = await refreshUser();
-        setLoading(false);
-        if (verified) {
-          setMessage("✅ Email verified! You can now log in.");
-          setVerificationSent(false);
-          setMode("login");
-        } else {
-          setMessage("⚠️ Email not verified yet. Please check your inbox.");
-        }
-      }}
-      disabled={loading}
-      className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
-    >
-      I Verified My Email
-    </button>
-
-    <button
-      onClick={handleResendVerification}
-      disabled={loading}
-      className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
-    >
-      Resend Verification Email
-    </button>
-  </div>
-)}
+        <div className="flex flex-col items-center gap-4 mt-4">
+          <p className="text-gray-700 text-center">
+            We sent a verification email to <strong>{email}</strong>. Please click the link in your email to confirm.
+          </p>
+          <button
+            onClick={handleCheckVerification}
+            disabled={loading}
+            className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
+          >
+            I Verified My Email
+          </button>
+          <button
+            onClick={handleResendVerification}
+            disabled={loading}
+            className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
+          >
+            Resend Verification Email
+          </button>
+        </div>
+      )}
 
       {/* Toggle login/signup */}
       <div className="flex justify-between mt-4 text-sm text-gray-600">
