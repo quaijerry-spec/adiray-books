@@ -19,6 +19,24 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Add a helper to refresh the current user
+const refreshUser = async () => {
+  if (auth.currentUser) {
+    await auth.currentUser.reload();
+    const currentUser = auth.currentUser;
+    setUser({
+      uid: currentUser.uid,
+      email: currentUser.email,
+      displayName: currentUser.displayName || "",
+      role: user?.role || "user",
+      emailVerified: currentUser.emailVerified,
+      provider: currentUser.providerData[0]?.providerId,
+    });
+    return currentUser.emailVerified;
+  }
+  return false;
+};
+  
   // 🔹 Track auth state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -162,6 +180,7 @@ export const AuthProvider = ({ children }) => {
         logout,
         resendVerification,
         resetPassword,
+        refreshUser,
       }}
     >
       {children}
