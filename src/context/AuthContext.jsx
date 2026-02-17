@@ -18,19 +18,13 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // 🔹 Track Auth State
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        // If email not verified, treat as null (except for Google sign-in)
-        if (!currentUser.emailVerified && !currentUser.providerData.some(p => p.providerId === "google.com")) {
-          setUser(null);
-          setLoading(false);
-          return;
-        }
-
-        // Fetch role from Firestore
         const docRef = doc(db, "users", currentUser.uid);
         const docSnap = await getDoc(docRef);
+
         const role = docSnap.exists() ? docSnap.data().role : "user";
 
         setUser({
@@ -38,17 +32,20 @@ export const AuthProvider = ({ children }) => {
           email: currentUser.email,
           displayName: currentUser.displayName,
           role,
+          emailVerified: currentUser.emailVerified,
+          provider: currentUser.providerData[0]?.providerId,
         });
       } else {
         setUser(null);
       }
+
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
-  // Email/password signup
+  // 🔹 Signup
   const signup = async (email, password) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const newUser = userCredential.user;
@@ -56,9 +53,9 @@ export const AuthProvider = ({ children }) => {
     // Send verification email
     await sendEmailVerification(newUser);
 
-    // Save user role to Firestore
+    // Save user to Firestore
     await setDoc(doc(db, "users", newUser.uid), {
-      role: "user", // default
+      role: "user",
       email: newUser.email,
       displayName: newUser.displayName || "",
       createdAt: new Date(),
@@ -67,7 +64,7 @@ export const AuthProvider = ({ children }) => {
     return newUser;
   };
 
-  // Email/password login
+  // 🔹 Login
   const login = async (email, password) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const loggedInUser = userCredential.user;
@@ -77,28 +74,15 @@ export const AuthProvider = ({ children }) => {
       throw new Error("Please verify your email before logging in.");
     }
 
-    // Fetch role from Firestore
-    const docRef = doc(db, "users", loggedInUser.uid);
-    const docSnap = await getDoc(docRef);
-    const role = docSnap.exists() ? docSnap.data().role : "user";
-
-    setUser({
-      uid: loggedInUser.uid,
-      email: loggedInUser.email,
-      displayName: loggedInUser.displayName,
-      role,
-    });
-
     return loggedInUser;
   };
 
-  // Google login
+  // 🔹 Google Login
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
     const googleUser = result.user;
 
-    // Check Firestore role
     const docRef = doc(db, "users", googleUser.uid);
     const docSnap = await getDoc(docRef);
 
@@ -111,24 +95,26 @@ export const AuthProvider = ({ children }) => {
       });
     }
 
-    setUser({
-      uid: googleUser.uid,
-      email: googleUser.email,
-      displayName: googleUser.displayName,
-      role: docSnap.exists() ? docSnap.data().role : "user",
-    });
-
     return googleUser;
   };
 
-  // Logout
+  // 🔹 Logout
   const logout = async () => {
     await signOut(auth);
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, loginWithGoogle, logout, loading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        signup,
+        login,
+        loginWithGoogle,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
