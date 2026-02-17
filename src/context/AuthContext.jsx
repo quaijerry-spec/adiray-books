@@ -1,40 +1,36 @@
 // src/context/AuthContext.jsx
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { auth, db } from "../firebase"; // make sure 'db' is Firestore
+import { auth, db } from "../firebase";
 import {
   onAuthStateChanged,
-  signOut,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  signOut,
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
-import {
-  doc,
-  setDoc,
-  getDoc,
-  serverTimestamp,
-} from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // useful for initial auth state
+  const [loading, setLoading] = useState(true); // tracks auth initialization
 
-  // Track auth state and fetch role
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        // Fetch Firestore user doc to get role
+        // Fetch role from Firestore
         const docRef = doc(db, "users", currentUser.uid);
         const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setUser({ uid: currentUser.uid, email: currentUser.email, ...docSnap.data() });
-        } else {
-          // Default to 'user' role if no doc exists
-          setUser({ uid: currentUser.uid, email: currentUser.email, role: "user" });
-        }
+        const role = docSnap.exists() ? docSnap.data().role : "user";
+
+        setUser({
+          uid: currentUser.uid,
+          email: currentUser.email,
+          displayName: currentUser.displayName,
+          role,
+        });
       } else {
         setUser(null);
       }
@@ -43,48 +39,80 @@ export const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  // 🔑 Signup with email/password and store role in Firestore
+  // Email/password signup
   const signup = async (email, password) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const uid = userCredential.user.uid;
-    // store role = "user" by default
-    await setDoc(doc(db, "users", uid), {
-      email,
+    const newUser = userCredential.user;
+
+    // Save user role to Firestore
+    await setDoc(doc(db, "users", newUser.uid), {
+      role: "user", // default role
+      email: newUser.email,
+      displayName: newUser.displayName || "",
+      createdAt: new Date(),
+    });
+
+    setUser({
+      uid: newUser.uid,
+      email: newUser.email,
+      displayName: newUser.displayName || "",
       role: "user",
-      createdAt: serverTimestamp(),
     });
   };
 
-  // 🔑 Login
-  const login = (email, password) => signInWithEmailAndPassword(auth, email, password);
+  // Email/password login
+  const login = async (email, password) => {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    const loggedInUser = userCredential.user;
 
-  // 🔑 Google login with role check
+    // Fetch role from Firestore
+    const docRef = doc(db, "users", loggedInUser.uid);
+    const docSnap = await getDoc(docRef);
+    const role = docSnap.exists() ? docSnap.data().role : "user";
+
+    setUser({
+      uid: loggedInUser.uid,
+      email: loggedInUser.email,
+      displayName: loggedInUser.displayName,
+      role,
+    });
+  };
+
+  // Google login
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
-    const uid = result.user.uid;
-    const docRef = doc(db, "users", uid);
+    const googleUser = result.user;
+
+    // Check if user already exists in Firestore
+    const docRef = doc(db, "users", googleUser.uid);
     const docSnap = await getDoc(docRef);
+
     if (!docSnap.exists()) {
-      // New Google user: add to Firestore with role 'user'
       await setDoc(docRef, {
-        email: result.user.email,
         role: "user",
-        createdAt: serverTimestamp(),
+        email: googleUser.email,
+        displayName: googleUser.displayName,
+        createdAt: new Date(),
       });
     }
+
+    setUser({
+      uid: googleUser.uid,
+      email: googleUser.email,
+      displayName: googleUser.displayName,
+      role: docSnap.exists() ? docSnap.data().role : "user",
+    });
   };
 
-  // 🔑 Password reset
-  const resetPassword = (email) => auth.sendPasswordResetEmail(email);
-
-  // 🔑 Logout
-  const logout = () => signOut(auth);
+  // Logout
+  const logout = async () => {
+    await signOut(auth);
+    setUser(null);
+  };
 
   return (
-    <AuthContext.Provider
-      value={{ user, loading, login, signup, loginWithGoogle, resetPassword, logout }}
-    >
+    <AuthContext.Provider value={{ user, login, signup, loginWithGoogle, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
