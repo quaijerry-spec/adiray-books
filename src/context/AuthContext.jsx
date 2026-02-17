@@ -1,5 +1,6 @@
 // context/AuthContext.jsx
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { auth, db } from "../firebase"; // Firestore included
 import {
   onAuthStateChanged,
   signOut,
