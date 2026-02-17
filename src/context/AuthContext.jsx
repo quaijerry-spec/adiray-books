@@ -23,6 +23,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
+        // Fetch Firestore role
         const docRef = doc(db, "users", currentUser.uid);
         const docSnap = await getDoc(docRef);
         const role = docSnap.exists() ? docSnap.data().role : "user";
@@ -44,7 +45,7 @@ export const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  // 🔹 Signup (email/password)
+  // 🔹 Signup with email/password
   const signup = async (email, password) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const newUser = userCredential.user;
@@ -73,17 +74,18 @@ export const AuthProvider = ({ children }) => {
     return newUser;
   };
 
-  // 🔹 Login (email/password)
+  // 🔹 Login with email/password
   const login = async (email, password) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const loggedInUser = userCredential.user;
 
-    // Block unverified users
-    if (!loggedInUser.emailVerified) {
+    // Enforce email verification for non-Google accounts
+    if (!loggedInUser.emailVerified && loggedInUser.providerData[0]?.providerId !== "google.com") {
       await signOut(auth);
       throw new Error("Please verify your email before logging in.");
     }
 
+    // Fetch Firestore role
     const docRef = doc(db, "users", loggedInUser.uid);
     const docSnap = await getDoc(docRef);
     const role = docSnap.exists() ? docSnap.data().role : "user";
@@ -106,9 +108,9 @@ export const AuthProvider = ({ children }) => {
     const result = await signInWithPopup(auth, provider);
     const googleUser = result.user;
 
+    // Save user in Firestore if new
     const docRef = doc(db, "users", googleUser.uid);
     const docSnap = await getDoc(docRef);
-
     if (!docSnap.exists()) {
       await setDoc(docRef, {
         role: "user",
