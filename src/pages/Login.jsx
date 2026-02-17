@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+// src/pages/Login.jsx
+import React from "react";
+import AuthForm from "../components/AuthForm";
 
 export default function Login() {
+  return <AuthForm />;
+}
   const [email, setEmail] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
