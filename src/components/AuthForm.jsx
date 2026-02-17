@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 
 export default function AuthForm() {
   const { signup, login, loginWithGoogle } = useAuth();
-  const [mode, setMode] = useState("login"); // "login" | "signup"
+  const [mode, setMode] = useState("login"); // login | signup
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
@@ -18,8 +18,14 @@ export default function AuthForm() {
     try {
       if (mode === "login") {
         await login(email, password);
-      } else if (mode === "signup") {
+        setMessage("Login successful!");
+      }
+      if (mode === "signup") {
         await signup(email, password);
+        setMessage(
+          "Account created! Please check your email to verify before logging in."
+        );
+        setMode("login");
       }
     } catch (err) {
       setMessage(err.message);
@@ -29,9 +35,8 @@ export default function AuthForm() {
   };
 
   const handleGoogleLogin = async () => {
-    setMessage("");
-    setLoading(true);
     try {
+      setLoading(true);
       await loginWithGoogle();
     } catch (err) {
       setMessage(err.message);
@@ -48,7 +53,6 @@ export default function AuthForm() {
 
       {message && <p className="text-red-500 mb-4">{message}</p>}
 
-      {/* Google Login */}
       <button
         onClick={handleGoogleLogin}
         disabled={loading}
@@ -57,7 +61,6 @@ export default function AuthForm() {
         Continue with Google
       </button>
 
-      {/* Email/Password form */}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="email"
@@ -84,7 +87,6 @@ export default function AuthForm() {
         </button>
       </form>
 
-      {/* Mode switch */}
       <div className="flex justify-between mt-4 text-sm text-gray-600">
         {mode === "login" ? (
           <button onClick={() => setMode("signup")}>Create account</button>
