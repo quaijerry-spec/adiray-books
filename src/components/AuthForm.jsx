@@ -1,53 +1,55 @@
 import React, { useState } from "react";
-import { auth } from "../firebase";
+import { useAuth } from "../context/AuthContext";
 import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  sendPasswordResetEmail,
   GoogleAuthProvider,
   signInWithPopup,
+  sendPasswordResetEmail,
 } from "firebase/auth";
+import { auth } from "../firebase";
 
-export default function AuthForm({ onLogin }) {
+export default function AuthForm() {
+  const { signup, login } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mode, setMode] = useState("login"); // login | signup | reset
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const provider = new GoogleAuthProvider();
 
+  // 🔐 Google Login
   const handleGoogleLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, provider);
-      onLogin(result.user);
+      setLoading(true);
+      await signInWithPopup(auth, provider);
     } catch (err) {
       setMessage(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
+  // 🔑 Email Auth
   const handleEmailAuth = async (e) => {
     e.preventDefault();
+    setMessage("");
+
     try {
+      setLoading(true);
+
       if (mode === "login") {
-        const userCredential = await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-        onLogin(userCredential.user);
+        await login(email, password);
       } else if (mode === "signup") {
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-        onLogin(userCredential.user);
+        await signup("User", email, password);
       } else if (mode === "reset") {
         await sendPasswordResetEmail(auth, email);
         setMessage("Password reset email sent!");
       }
     } catch (err) {
       setMessage(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,6 +68,7 @@ export default function AuthForm({ onLogin }) {
       {mode !== "reset" && (
         <button
           onClick={handleGoogleLogin}
+          disabled={loading}
           className="w-full mb-4 bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition"
         >
           Continue with Google
@@ -81,6 +84,7 @@ export default function AuthForm({ onLogin }) {
           required
           className="px-4 py-2 rounded-full border focus:ring-2 focus:ring-orange-400 focus:outline-none"
         />
+
         {mode !== "reset" && (
           <input
             type="password"
@@ -91,8 +95,10 @@ export default function AuthForm({ onLogin }) {
             className="px-4 py-2 rounded-full border focus:ring-2 focus:ring-orange-400 focus:outline-none"
           />
         )}
+
         <button
           type="submit"
+          disabled={loading}
           className="w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition"
         >
           {mode === "login"
