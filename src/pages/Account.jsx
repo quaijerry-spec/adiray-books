@@ -5,7 +5,10 @@ import AuthForm from "../components/AuthForm";
 import { Link } from "react-router-dom";
 
 export default function Account() {
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
+
+  // Prevent white flash while Firebase loads
+  if (loading) return <p className="pt-32 text-center">Loading...</p>;
 
   return (
     <div className="pt-32 min-h-screen bg-gray-100">
