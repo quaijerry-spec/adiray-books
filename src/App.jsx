@@ -10,20 +10,20 @@ import Account from "./pages/Account";
 import Login from "./pages/Login";
 import Orders from "./pages/Orders";
 import AdminDashboard from "./pages/AdminDashboard";
-
-import ProtectedRoute from "./components/ProtectedRoute";
 import { CartProvider } from "./context/CartContext";
 import { useAuth } from "./context/AuthContext";
 
+function ProtectedRoute({ children, adminOnly = false }) {
+  const { user } = useAuth();
+
+  if (!user) return <Navigate to="/login" />;
+  if (adminOnly && user.role !== "admin") return <Navigate to="/account" />;
+  return children;
+}
+
 export default function App() {
   const [search, setSearch] = useState("");
-  const location = useLocation(); // needed for AnimatePresence
-
-  // Admin-only route wrapper
-  function ProtectedAdminRoute({ children }) {
-    const { user } = useAuth();
-    return user?.role === "admin" ? children : <Navigate to="/account" />;
-  }
+  const location = useLocation();
 
   return (
     <CartProvider>
@@ -41,8 +41,6 @@ export default function App() {
             <Route path="/" element={<Home search={search} />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/login" element={<Login />} />
-
-            {/* Protected account routes */}
             <Route
               path="/account"
               element={
@@ -59,14 +57,12 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
-
-            {/* Admin-only route */}
             <Route
               path="/admin"
               element={
-                <ProtectedAdminRoute>
+                <ProtectedRoute adminOnly={true}>
                   <AdminDashboard />
-                </ProtectedAdminRoute>
+                </ProtectedRoute>
               }
             />
           </Routes>
