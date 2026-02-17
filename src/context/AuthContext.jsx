@@ -12,7 +12,11 @@ import {
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { sendEmailVerification } from "firebase/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
 
+const resetPassword = async (email) => {
+  await sendPasswordResetEmail(auth, email);
+};
 const resendVerification = async () => {
   if (auth.currentUser) {
     await sendEmailVerification(auth.currentUser);
@@ -121,6 +125,7 @@ export const AuthProvider = ({ children }) => {
     loginWithGoogle,
     logout,
     resendVerification,
+    resetPassword,
   }}
 >
       {children}
