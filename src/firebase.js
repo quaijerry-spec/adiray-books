@@ -1,6 +1,7 @@
 // src/firebase.js
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 // Your Firebase config
 const firebaseConfig = {
@@ -15,5 +16,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Only export auth for now
-export const auth = getAuth(app);
+// Initialize Firebase services
+export const auth = getAuth(app);      // Authentication
+export const db = getFirestore(app);   // Firestore for storing user roles, orders, etc.
