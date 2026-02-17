@@ -49,11 +49,11 @@ export default function App() {
     </ProtectedRoute>
   }
 />
-<Route
+Route
   path="/admin"
   element={
-    <ProtectedRoute>
-      <Admin />
+    <ProtectedRoute adminOnly={true}>
+      <AdminDashboard />
     </ProtectedRoute>
   }
 />
