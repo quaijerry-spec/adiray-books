@@ -134,19 +134,39 @@ export default function AuthForm() {
 
       {/* Resend verification after signup */}
       {verificationSent && (
-        <div className="flex flex-col items-center gap-4 mt-4">
-          <p className="text-gray-700 text-center">
-            Didn't receive the email?
-          </p>
-          <button
-            onClick={handleResendVerification}
-            disabled={loading}
-            className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
-          >
-            Resend Verification Email
-          </button>
-        </div>
-      )}
+  <div className="flex flex-col items-center gap-4 mt-4">
+    <p className="text-gray-700 text-center">
+      We sent a verification email to <strong>{email}</strong>. Please click the link in your email to confirm.
+    </p>
+
+    <button
+      onClick={async () => {
+        setLoading(true);
+        const verified = await refreshUser();
+        setLoading(false);
+        if (verified) {
+          setMessage("✅ Email verified! You can now log in.");
+          setVerificationSent(false);
+          setMode("login");
+        } else {
+          setMessage("⚠️ Email not verified yet. Please check your inbox.");
+        }
+      }}
+      disabled={loading}
+      className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
+    >
+      I Verified My Email
+    </button>
+
+    <button
+      onClick={handleResendVerification}
+      disabled={loading}
+      className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
+    >
+      Resend Verification Email
+    </button>
+  </div>
+)}
 
       {/* Toggle login/signup */}
       <div className="flex justify-between mt-4 text-sm text-gray-600">
