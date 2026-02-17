@@ -1,4 +1,12 @@
-import { createContext, useContext, useState, useEffect } from "react";
+// src/context/AuthContext.jsx
+import { createContext, useContext, useEffect, useState } from "react";
+import { auth } from "../firebase";
+import {
+  onAuthStateChanged,
+  signOut,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
 
 const AuthContext = createContext();
 
@@ -6,23 +14,23 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem("adiray_user");
-    if (savedUser) setUser(JSON.parse(savedUser));
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  const login = (email) => {
-    const userData = { email, role: email === "admin@adiray.com" ? "admin" : "user" };
-    localStorage.setItem("adiray_user", JSON.stringify(userData));
-    setUser(userData);
-  };
+  const login = (email, password) =>
+    signInWithEmailAndPassword(auth, email, password);
 
-  const logout = () => {
-    localStorage.removeItem("adiray_user");
-    setUser(null);
-  };
+  const signup = (email, password) =>
+    createUserWithEmailAndPassword(auth, email, password);
+
+  const logout = () => signOut(auth);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );
