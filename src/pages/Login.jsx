@@ -22,6 +22,18 @@ export default function Login() {
   return (
     <div className="pt-32 min-h-screen bg-gray-100 flex justify-center">
       <AuthForm />
+      <button
+  onClick={async () => {
+    const email = prompt("Enter your email for password reset:");
+    if (email) {
+      await resetPassword(email);
+      alert("Password reset email sent.");
+    }
+  }}
+  className="text-sm text-orange-500 hover:underline"
+>
+  Forgot Password?
+</button>
     </div>
   );
 }
