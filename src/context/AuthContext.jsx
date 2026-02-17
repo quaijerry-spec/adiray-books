@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        // Fetch Firestore role
+        // Fetch role from Firestore
         const docRef = doc(db, "users", currentUser.uid);
         const docSnap = await getDoc(docRef);
         const role = docSnap.exists() ? docSnap.data().role : "user";
@@ -45,7 +45,7 @@ export const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  // 🔹 Signup with email/password
+  // 🔹 Signup (email/password)
   const signup = async (email, password) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const newUser = userCredential.user;
@@ -53,7 +53,7 @@ export const AuthProvider = ({ children }) => {
     // Send verification email
     await sendEmailVerification(newUser);
 
-    // Save user to Firestore
+    // Save user role to Firestore
     await setDoc(doc(db, "users", newUser.uid), {
       role: "user",
       email: newUser.email,
@@ -74,13 +74,13 @@ export const AuthProvider = ({ children }) => {
     return newUser;
   };
 
-  // 🔹 Login with email/password
+  // 🔹 Login (email/password)
   const login = async (email, password) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const loggedInUser = userCredential.user;
 
-    // Enforce email verification for non-Google accounts
-    if (!loggedInUser.emailVerified && loggedInUser.providerData[0]?.providerId !== "google.com") {
+    // Block unverified users
+    if (!loggedInUser.emailVerified && loggedInUser.providerData[0].providerId !== "google.com") {
       await signOut(auth);
       throw new Error("Please verify your email before logging in.");
     }
@@ -108,7 +108,7 @@ export const AuthProvider = ({ children }) => {
     const result = await signInWithPopup(auth, provider);
     const googleUser = result.user;
 
-    // Save user in Firestore if new
+    // Ensure Firestore user exists
     const docRef = doc(db, "users", googleUser.uid);
     const docSnap = await getDoc(docRef);
     if (!docSnap.exists()) {
@@ -120,6 +120,7 @@ export const AuthProvider = ({ children }) => {
       });
     }
 
+    // ✅ Update context properly
     setUser({
       uid: googleUser.uid,
       email: googleUser.email,
