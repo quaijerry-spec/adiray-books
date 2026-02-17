@@ -50,7 +50,7 @@ export default function App() {
     </ProtectedRoute>
   }
 />
-Route
+<Route
   path="/admin"
   element={
     <ProtectedRoute adminOnly={true}>
