@@ -11,7 +11,6 @@ import {
   sendEmailVerification,
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
-import { sendEmailVerification } from "firebase/auth";
 import { sendPasswordResetEmail } from "firebase/auth";
 
 const resetPassword = async (email) => {
