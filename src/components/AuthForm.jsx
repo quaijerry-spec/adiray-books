@@ -20,11 +20,11 @@ export default function AuthForm() {
     try {
       if (mode === "login") {
         await login(email, password);
-        setMessage("Login successful!");
+        setMessage("✅ Login successful!");
       } else if (mode === "signup") {
         await signup(email, password);
         setMessage(
-          "Account created! Please check your email for verification before logging in."
+          "✅ Account created! Please check your email for verification before logging in."
         );
         setVerificationSent(true);
       }
@@ -41,7 +41,7 @@ export default function AuthForm() {
     setLoading(true);
     try {
       await loginWithGoogle();
-      setMessage("Login successful!");
+      setMessage("✅ Login successful!");
     } catch (err) {
       setMessage(err.message);
     } finally {
@@ -55,12 +55,21 @@ export default function AuthForm() {
     setLoading(true);
     try {
       await resendVerification();
-      setMessage("Verification email sent again!");
+      setMessage("✅ Verification email sent again!");
     } catch (err) {
       setMessage(err.message);
     } finally {
       setLoading(false);
     }
+  };
+
+  // 🔹 Reset form when switching modes
+  const toggleMode = (newMode) => {
+    setMode(newMode);
+    setMessage("");
+    setVerificationSent(false);
+    setEmail("");
+    setPassword("");
   };
 
   return (
@@ -69,7 +78,17 @@ export default function AuthForm() {
         {mode === "login" ? "Login" : "Create Account"}
       </h2>
 
-      {message && <p className="text-red-500 mb-4">{message}</p>}
+      {/* Message */}
+      {message && (
+        <p
+          className={`mb-4 ${
+            message.includes("✅") ? "text-green-600" : "text-red-500"
+          }`}
+          role="alert"
+        >
+          {message}
+        </p>
+      )}
 
       {/* Google login */}
       {mode !== "signup" && (
@@ -92,6 +111,7 @@ export default function AuthForm() {
             required
             onChange={(e) => setEmail(e.target.value)}
             className="px-4 py-2 rounded-full border focus:ring-2 focus:ring-orange-400"
+            aria-label="Email"
           />
           <input
             type="password"
@@ -100,6 +120,7 @@ export default function AuthForm() {
             required
             onChange={(e) => setPassword(e.target.value)}
             className="px-4 py-2 rounded-full border focus:ring-2 focus:ring-orange-400"
+            aria-label="Password"
           />
           <button
             type="submit"
@@ -130,25 +151,9 @@ export default function AuthForm() {
       {/* Toggle login/signup */}
       <div className="flex justify-between mt-4 text-sm text-gray-600">
         {mode === "login" ? (
-          <button
-            onClick={() => {
-              setMode("signup");
-              setMessage("");
-              setVerificationSent(false);
-            }}
-          >
-            Create account
-          </button>
+          <button onClick={() => toggleMode("signup")}>Create account</button>
         ) : (
-          <button
-            onClick={() => {
-              setMode("login");
-              setMessage("");
-              setVerificationSent(false);
-            }}
-          >
-            Back to login
-          </button>
+          <button onClick={() => toggleMode("login")}>Back to login</button>
         )}
       </div>
     </div>
