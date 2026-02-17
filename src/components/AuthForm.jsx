@@ -1,7 +1,7 @@
 // components/AuthForm.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "firebase/auth";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../firebase";
 
 export default function AuthForm() {
@@ -12,14 +12,12 @@ export default function AuthForm() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const provider = new GoogleAuthProvider();
-
   // 🔐 Google login
   const handleGoogleLogin = async () => {
     setMessage("");
     try {
       setLoading(true);
-      await loginWithGoogle(provider); // use your context function
+      await loginWithGoogle(); // context handles provider & Firestore
     } catch (err) {
       setMessage(err.message);
     } finally {
@@ -38,7 +36,7 @@ export default function AuthForm() {
       if (mode === "login") {
         await login(email, password);
       } else if (mode === "signup") {
-        await signup(email, password);
+        await signup(email, password); // context saves default role
       } else if (mode === "reset") {
         await sendPasswordResetEmail(auth, email);
         setMessage("Password reset email sent!");
@@ -96,7 +94,11 @@ export default function AuthForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition"
+          className={`w-full py-3 rounded-full transition ${
+            mode === "reset"
+              ? "bg-blue-500 text-white hover:bg-blue-600"
+              : "bg-orange-500 text-white hover:bg-orange-600"
+          }`}
         >
           {mode === "login"
             ? "Login"
@@ -107,10 +109,10 @@ export default function AuthForm() {
       </form>
 
       <div className="flex justify-between mt-4 text-sm text-gray-600">
-        {mode !== "signup" && mode !== "reset" && (
+        {mode === "login" && (
           <button onClick={() => setMode("signup")}>Create account</button>
         )}
-        {mode !== "login" && (
+        {mode === "signup" && (
           <button onClick={() => setMode("login")}>Back to login</button>
         )}
         {mode !== "reset" && (
