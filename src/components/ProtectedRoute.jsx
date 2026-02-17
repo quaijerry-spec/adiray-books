@@ -19,8 +19,9 @@ export default function ProtectedRoute({ children, adminOnly = false }) {
   if (!user) return <Navigate to="/login" />;
 
   // Email not verified
-  if (!user.emailVerified && !user.providerData.some(p => p.providerId === "google.com")) {
-    return (
+  if (!user.emailVerified && user.provider !== "google.com") {
+  return <Navigate to="/login" />;
+  }
       <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
         <p className="mb-4 text-red-500">
           Please verify your email before accessing this page.
