@@ -1,14 +1,11 @@
 // src/components/ProtectedRoute.jsx
-import React, { useState } from "react";
+import React from "react";
 import { useAuth } from "../context/AuthContext";
-import { Navigate } from "react-router-dom";
 
 export default function ProtectedRoute({ children, adminOnly = false }) {
   const { user, loading, resendVerification } = useAuth();
-  const [resending, setResending] = useState(false);
-  const [message, setMessage] = useState("");
 
-  // 🔹 Wait for auth to initialize
+  // 🔹 Show loading while auth initializes
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -19,62 +16,62 @@ export default function ProtectedRoute({ children, adminOnly = false }) {
 
   // 🔹 Not logged in
   if (!user) {
-    return <Navigate to="/login" />;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
+        <p className="mb-4 text-red-500">You must be logged in to access this page.</p>
+        <a
+          href="/login"
+          className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
+        >
+          Go to Login
+        </a>
+      </div>
+    );
   }
 
   // 🔹 Email not verified (except Google users)
   if (!user.emailVerified && user.provider !== "google.com") {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-6 text-center">
-        <h2 className="text-xl font-semibold mb-4 text-red-500">
-          Email Verification Required
-        </h2>
-
-        <p className="mb-6 text-gray-600 max-w-md">
-          Please verify your email address before accessing this page.
-          Check your inbox and spam folder.
+      <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center gap-4">
+        <p className="text-red-500">
+          Please verify your email before accessing this page.
         </p>
-
         <button
           onClick={async () => {
-            if (!resendVerification) return;
-            try {
-              setResending(true);
-              setMessage("");
-              await resendVerification();
-              setMessage("Verification email sent successfully.");
-            } catch (error) {
-              setMessage("Failed to send verification email. Try again.");
-            } finally {
-              setResending(false);
-            }
+            await resendVerification();
+            alert("Verification email sent again!");
           }}
-          disabled={resending}
-          className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition disabled:opacity-50"
+          className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
         >
-          {resending ? "Sending..." : "Resend Verification Email"}
+          Resend Verification Email
         </button>
-
-        {message && (
-          <p className="mt-4 text-sm text-gray-700">
-            {message}
-          </p>
-        )}
-
         <button
           onClick={() => window.location.reload()}
-          className="mt-6 text-sm text-orange-500 hover:underline"
+          className="px-6 py-3 bg-gray-300 text-black rounded-full hover:bg-gray-400 transition"
         >
-          I've Verified — Refresh Page
+          Refresh After Verification
         </button>
       </div>
     );
   }
 
-  // 🔹 Admin-only protection
+  // 🔹 Admin-only access
   if (adminOnly && user.role !== "admin") {
-    return <Navigate to="/account" />;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
+        <p className="mb-4 text-red-500">
+          You do not have permission to access this page.
+        </p>
+        <a
+          href="/account"
+          className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
+        >
+          Go to Account
+        </a>
+      </div>
+    );
   }
 
+  // 🔹 Authorized users
   return children;
-      }
+}
