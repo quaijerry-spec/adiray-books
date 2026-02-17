@@ -1,28 +1,25 @@
+// components/AuthForm.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import {
-  GoogleAuthProvider,
-  signInWithPopup,
-  sendPasswordResetEmail,
-} from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../firebase";
 
 export default function AuthForm() {
-  const { signup, login } = useAuth();
-
+  const { signup, login, loginWithGoogle } = useAuth();
+  const [mode, setMode] = useState("login"); // login | signup | reset
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [mode, setMode] = useState("login"); // login | signup | reset
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const provider = new GoogleAuthProvider();
 
-  // 🔐 Google Login
+  // 🔐 Google login
   const handleGoogleLogin = async () => {
+    setMessage("");
     try {
       setLoading(true);
-      await signInWithPopup(auth, provider);
+      await loginWithGoogle(provider); // use your context function
     } catch (err) {
       setMessage(err.message);
     } finally {
@@ -30,8 +27,8 @@ export default function AuthForm() {
     }
   };
 
-  // 🔑 Email Auth
-  const handleEmailAuth = async (e) => {
+  // 🔑 Email/password auth
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
 
@@ -41,7 +38,7 @@ export default function AuthForm() {
       if (mode === "login") {
         await login(email, password);
       } else if (mode === "signup") {
-        await signup("User", email, password);
+        await signup(email, password);
       } else if (mode === "reset") {
         await sendPasswordResetEmail(auth, email);
         setMessage("Password reset email sent!");
@@ -63,7 +60,7 @@ export default function AuthForm() {
           : "Reset Password"}
       </h2>
 
-      {message && <p className="mb-4 text-red-500">{message}</p>}
+      {message && <p className="text-red-500 mb-4">{message}</p>}
 
       {mode !== "reset" && (
         <button
@@ -75,13 +72,13 @@ export default function AuthForm() {
         </button>
       )}
 
-      <form onSubmit={handleEmailAuth} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
           required
+          onChange={(e) => setEmail(e.target.value)}
           className="px-4 py-2 rounded-full border focus:ring-2 focus:ring-orange-400 focus:outline-none"
         />
 
@@ -90,8 +87,8 @@ export default function AuthForm() {
             type="password"
             placeholder="Password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
             required
+            onChange={(e) => setPassword(e.target.value)}
             className="px-4 py-2 rounded-full border focus:ring-2 focus:ring-orange-400 focus:outline-none"
           />
         )}
@@ -110,7 +107,7 @@ export default function AuthForm() {
       </form>
 
       <div className="flex justify-between mt-4 text-sm text-gray-600">
-        {mode !== "signup" && (
+        {mode !== "signup" && mode !== "reset" && (
           <button onClick={() => setMode("signup")}>Create account</button>
         )}
         {mode !== "login" && (
