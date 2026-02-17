@@ -1,8 +1,8 @@
 // src/firebase.js
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
 
+// Your Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyBd_q9GpUeLERYaAhTfSksx3eKDPchczFQ",
   authDomain: "adiray-books-1234.firebaseapp.com",
@@ -12,8 +12,8 @@ const firebaseConfig = {
   appId: "1:554330985579:web:14778bd9a56ea0f159cd2e",
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// ✅ Export auth and Firestore db
+// Only export auth for now
 export const auth = getAuth(app);
-export const db = getFirestore(app);
