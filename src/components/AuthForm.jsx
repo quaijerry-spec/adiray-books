@@ -16,17 +16,8 @@ export default function AuthForm() {
     setLoading(true);
 
     try {
-      if (mode === "login") {
-        await login(email, password);
-        setMessage("Login successful!");
-      }
-      if (mode === "signup") {
-        await signup(email, password);
-        setMessage(
-          "Account created! Please check your email to verify before logging in."
-        );
-        setMode("login");
-      }
+      if (mode === "login") await login(email, password);
+      if (mode === "signup") await signup(email, password);
     } catch (err) {
       setMessage(err.message);
     } finally {
@@ -35,8 +26,8 @@ export default function AuthForm() {
   };
 
   const handleGoogleLogin = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       await loginWithGoogle();
     } catch (err) {
       setMessage(err.message);
