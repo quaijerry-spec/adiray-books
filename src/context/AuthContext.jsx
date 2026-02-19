@@ -20,147 +20,99 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Track auth state
+  // 🔥 CORRECT AUTH STATE LISTENER
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (currentUser) {
-        const docRef = doc(db, "users", currentUser.uid);
-        const docSnap = await getDoc(docRef);
-        const role = docSnap.exists() ? docSnap.data().role : "user";
-
-        setUser({
-          uid: currentUser.uid,
-          email: currentUser.email,
-          displayName: currentUser.displayName || "",
-          role,
-          emailVerified: currentUser.emailVerified,
-          provider: currentUser.providerData[0]?.providerId,
-        });
-      } else {
+      if (!currentUser) {
         setUser(null);
+        setLoading(false);
+        return;
       }
+
+      const docRef = doc(db, "users", currentUser.uid);
+      const docSnap = await getDoc(docRef);
+
+      const role = docSnap.exists() ? docSnap.data().role : "user";
+
+      setUser({
+        uid: currentUser.uid,
+        email: currentUser.email,
+        displayName: currentUser.displayName || "",
+        role,
+        emailVerified: currentUser.emailVerified,
+        provider: currentUser.providerData?.[0]?.providerId || null,
+      });
+
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
-  // 🔹 Signup (email/password)
+  // SIGNUP
   const signup = async (email, password) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const newUser = userCredential.user;
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
 
-    // Send verification email
-    await sendEmailVerification(newUser);
+    await sendEmailVerification(cred.user);
 
-    // Save user to Firestore
-    await setDoc(doc(db, "users", newUser.uid), {
+    await setDoc(doc(db, "users", cred.user.uid), {
       role: "user",
-      email: newUser.email,
-      displayName: newUser.displayName || "",
+      email: cred.user.email,
+      displayName: cred.user.displayName || "",
       createdAt: new Date(),
     });
-
-    // Update context with unverified user
-    setUser({
-      uid: newUser.uid,
-      email: newUser.email,
-      displayName: newUser.displayName || "",
-      role: "user",
-      emailVerified: newUser.emailVerified,
-      provider: newUser.providerData[0]?.providerId,
-    });
-
-    return newUser;
   };
 
-  // 🔹 Login (email/password)
+  // LOGIN
   const login = async (email, password) => {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const loggedInUser = userCredential.user;
+    const cred = await signInWithEmailAndPassword(auth, email, password);
 
-    // Block unverified users
-    if (!loggedInUser.emailVerified && loggedInUser.providerData[0]?.providerId !== "google.com") {
+    if (!cred.user.emailVerified) {
       await signOut(auth);
       throw new Error("Please verify your email before logging in.");
     }
-
-    const docRef = doc(db, "users", loggedInUser.uid);
-    const docSnap = await getDoc(docRef);
-    const role = docSnap.exists() ? docSnap.data().role : "user";
-
-    setUser({
-      uid: loggedInUser.uid,
-      email: loggedInUser.email,
-      displayName: loggedInUser.displayName || "",
-      role,
-      emailVerified: loggedInUser.emailVerified,
-      provider: loggedInUser.providerData[0]?.providerId,
-    });
-
-    return loggedInUser;
   };
 
-  // 🔹 Google login
+  // 🔥 GOOGLE LOGIN (SAFE)
   const loginWithGoogle = async () => {
-  const provider = new GoogleAuthProvider();
-  const result = await signInWithPopup(auth, provider);
-  const googleUser = result.user;
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    const googleUser = result.user;
 
-  // Check Firestore role
-  const docRef = doc(db, "users", googleUser.uid);
-  const docSnap = await getDoc(docRef);
-  if (!docSnap.exists()) {
-    await setDoc(docRef, {
-      role: "user",
-      email: googleUser.email,
-      displayName: googleUser.displayName || "",
-      createdAt: new Date(),
-    });
-  }
+    const docRef = doc(db, "users", googleUser.uid);
+    const docSnap = await getDoc(docRef);
 
-  // ✅ Set user state safely
-  setUser({
-    uid: googleUser.uid,
-    email: googleUser.email,
-    displayName: googleUser.displayName || "",
-    role: docSnap.exists() ? docSnap.data().role : "user",
-    emailVerified: googleUser.emailVerified,
-    provider: googleUser.providerData?.[0]?.providerId || "google.com",
-  });
+    if (!docSnap.exists()) {
+      await setDoc(docRef, {
+        role: "user",
+        email: googleUser.email,
+        displayName: googleUser.displayName || "",
+        createdAt: new Date(),
+      });
+    }
 
-  return googleUser;
-};
+    // DO NOT manually setUser here.
+    // onAuthStateChanged will handle it automatically.
+  };
 
-  // 🔹 Logout
   const logout = async () => {
     await signOut(auth);
-    setUser(null);
   };
 
-  // 🔹 Resend verification email
   const resendVerification = async () => {
     if (auth.currentUser && !auth.currentUser.emailVerified) {
       await sendEmailVerification(auth.currentUser);
     }
   };
 
-  // 🔹 Reset password
   const resetPassword = async (email) => {
     await sendPasswordResetEmail(auth, email);
   };
 
-  // 🔹 Refresh user to check if email verified
   const refreshUser = async () => {
-    if (auth.currentUser) {
-      await reload(auth.currentUser);
-      const refreshed = auth.currentUser.emailVerified;
-      if (refreshed) {
-        setUser((prev) => ({ ...prev, emailVerified: true }));
-      }
-      return refreshed;
-    }
-    return false;
+    if (!auth.currentUser) return false;
+    await reload(auth.currentUser);
+    return auth.currentUser.emailVerified;
   };
 
   return (
