@@ -22,17 +22,35 @@ export const AuthProvider = ({ children }) => {
 
   // 🔥 CORRECT AUTH STATE LISTENER
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+  const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    try {
       if (!currentUser) {
         setUser(null);
         setLoading(false);
         return;
       }
 
-      const docRef = doc(db, "users", currentUser.uid);
-      const docSnap = await getDoc(docRef);
+      let role = "user";
 
-      const role = docSnap.exists() ? docSnap.data().role : "user";
+      try {
+        const docRef = doc(db, "users", currentUser.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          role = docSnap.data().role || "user";
+        } else {
+          // If user doc doesn't exist, create it (important for Google login)
+          await setDoc(docRef, {
+            role: "user",
+            email: currentUser.email,
+            displayName: currentUser.displayName || "",
+            createdAt: new Date(),
+          });
+        }
+      } catch (firestoreError) {
+        console.error("Firestore read error:", firestoreError);
+        // DO NOT break login if Firestore fails
+      }
 
       setUser({
         uid: currentUser.uid,
@@ -43,11 +61,16 @@ export const AuthProvider = ({ children }) => {
         provider: currentUser.providerData?.[0]?.providerId || null,
       });
 
-      setLoading(false);
-    });
+    } catch (error) {
+      console.error("Auth error:", error);
+      setUser(null);
+    }
 
-    return () => unsubscribe();
-  }, []);
+    setLoading(false);
+  });
+
+  return () => unsubscribe();
+}, []);
 
   // SIGNUP
   const signup = async (email, password) => {
@@ -75,21 +98,17 @@ export const AuthProvider = ({ children }) => {
 
   // 🔥 GOOGLE LOGIN (SAFE)
   const loginWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    const googleUser = result.user;
+  const provider = new GoogleAuthProvider();
 
-    const docRef = doc(db, "users", googleUser.uid);
-    const docSnap = await getDoc(docRef);
-
-    if (!docSnap.exists()) {
-      await setDoc(docRef, {
-        role: "user",
-        email: googleUser.email,
-        displayName: googleUser.displayName || "",
-        createdAt: new Date(),
-      });
-    }
+  try {
+    await signInWithPopup(auth, provider);
+    // Do NOT setUser here.
+    // onAuthStateChanged handles everything safely.
+  } catch (error) {
+    console.error("Google login error:", error);
+    throw error;
+  }
+};
 
     // DO NOT manually setUser here.
     // onAuthStateChanged will handle it automatically.
