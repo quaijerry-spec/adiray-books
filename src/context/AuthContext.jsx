@@ -20,59 +20,55 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 CORRECT AUTH STATE LISTENER
   useEffect(() => {
-  const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-    try {
-      if (!currentUser) {
-        setUser(null);
-        setLoading(false);
-        return;
-      }
-
-      let role = "user";
-
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       try {
-        const docRef = doc(db, "users", currentUser.uid);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          role = docSnap.data().role || "user";
-        } else {
-          // If user doc doesn't exist, create it (important for Google login)
-          await setDoc(docRef, {
-            role: "user",
-            email: currentUser.email,
-            displayName: currentUser.displayName || "",
-            createdAt: new Date(),
-          });
+        if (!currentUser) {
+          setUser(null);
+          setLoading(false);
+          return;
         }
-      } catch (firestoreError) {
-        console.error("Firestore read error:", firestoreError);
-        // DO NOT break login if Firestore fails
+
+        let role = "user";
+
+        try {
+          const docRef = doc(db, "users", currentUser.uid);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            role = docSnap.data().role || "user";
+          } else {
+            await setDoc(docRef, {
+              role: "user",
+              email: currentUser.email,
+              displayName: currentUser.displayName || "",
+              createdAt: new Date(),
+            });
+          }
+        } catch (firestoreError) {
+          console.error("Firestore error:", firestoreError);
+        }
+
+        setUser({
+          uid: currentUser.uid,
+          email: currentUser.email,
+          displayName: currentUser.displayName || "",
+          role,
+          emailVerified: currentUser.emailVerified,
+          provider: currentUser.providerData?.[0]?.providerId || null,
+        });
+
+      } catch (error) {
+        console.error("Auth error:", error);
+        setUser(null);
       }
 
-      setUser({
-        uid: currentUser.uid,
-        email: currentUser.email,
-        displayName: currentUser.displayName || "",
-        role,
-        emailVerified: currentUser.emailVerified,
-        provider: currentUser.providerData?.[0]?.providerId || null,
-      });
+      setLoading(false);
+    });
 
-    } catch (error) {
-      console.error("Auth error:", error);
-      setUser(null);
-    }
+    return () => unsubscribe();
+  }, []);
 
-    setLoading(false);
-  });
-
-  return () => unsubscribe();
-}, []);
-
-  // SIGNUP
   const signup = async (email, password) => {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
 
@@ -86,7 +82,6 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
-  // LOGIN
   const login = async (email, password) => {
     const cred = await signInWithEmailAndPassword(auth, email, password);
 
@@ -96,22 +91,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 🔥 GOOGLE LOGIN (SAFE)
   const loginWithGoogle = async () => {
-  const provider = new GoogleAuthProvider();
-
-  try {
+    const provider = new GoogleAuthProvider();
     await signInWithPopup(auth, provider);
-    // Do NOT setUser here.
-    // onAuthStateChanged handles everything safely.
-  } catch (error) {
-    console.error("Google login error:", error);
-    throw error;
-  }
-};
-
-    // DO NOT manually setUser here.
-    // onAuthStateChanged will handle it automatically.
   };
 
   const logout = async () => {
