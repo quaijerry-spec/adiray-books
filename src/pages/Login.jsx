@@ -5,19 +5,26 @@ import { useNavigate } from "react-router-dom";
 import AuthForm from "../components/AuthForm";
 
 export default function Login() {
-  const { user } = useAuth();
+  const { user, resetPassword } = useAuth();
   const navigate = useNavigate();
 
   // Redirect if already logged in
   useEffect(() => {
-    if (user) {
-      if (user.role === "admin") {
-        navigate("/admin");
-      } else {
-        navigate("/account");
-      }
-    }
-  }, [user, navigate]);
+  if (!user) return;
+
+  // 🔥 Block unverified users (except Google)
+  if (user.provider !== "google.com" && !user.emailVerified) {
+    navigate("/verify");
+    return;
+  }
+
+  // Admin redirect
+  if (user.role === "admin") {
+    navigate("/admin");
+  } else {
+    navigate("/account");
+  }
+}, [user, navigate]);
 
   return (
     <div className="pt-32 min-h-screen bg-gray-100 flex justify-center">
