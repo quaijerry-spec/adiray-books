@@ -1,9 +1,12 @@
 // src/components/AuthForm.jsx
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function AuthForm() {
-  const { signup, login, loginWithGoogle, resendVerification, refreshUser } = useAuth();
+  const { signup, login, loginWithGoogle, resendVerification } = useAuth();
+  const navigate = useNavigate();
+
   const [mode, setMode] = useState("login"); // login | signup
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,13 +26,16 @@ export default function AuthForm() {
         setMessage("✅ Login successful!");
       } else if (mode === "signup") {
         await signup(email, password);
-        setMessage(
-          `✅ Account created! A verification email was sent to ${email}. Please verify before logging in.`
-        );
         setVerificationSent(true);
+        setMessage(
+          "✅ Account created! A verification email has been sent."
+        );
+
+        // 🔹 Redirect immediately to verify page
+        navigate("/verify", { replace: true });
       }
     } catch (err) {
-      setMessage(err.message);
+      setMessage("⚠️ " + err.message);
     } finally {
       setLoading(false);
     }
@@ -42,8 +48,10 @@ export default function AuthForm() {
     try {
       await loginWithGoogle();
       setMessage("✅ Login successful!");
+      // After Google login, redirect automatically
+      navigate("/account", { replace: true });
     } catch (err) {
-      setMessage(err.message);
+      setMessage("⚠️ " + err.message);
     } finally {
       setLoading(false);
     }
@@ -57,27 +65,7 @@ export default function AuthForm() {
       await resendVerification();
       setMessage("✅ Verification email sent again!");
     } catch (err) {
-      setMessage(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 🔹 Handle refresh verification status
-  const handleRefreshVerification = async () => {
-    setMessage("");
-    setLoading(true);
-    try {
-      const verified = await refreshUser();
-      if (verified) {
-        setMessage("✅ Email verified! You can now log in.");
-        setVerificationSent(false);
-        setMode("login");
-      } else {
-        setMessage("⚠️ Email not verified yet. Please check your inbox.");
-      }
-    } catch (err) {
-      setMessage(err.message);
+      setMessage("⚠️ " + err.message);
     } finally {
       setLoading(false);
     }
@@ -101,7 +89,9 @@ export default function AuthForm() {
       {/* Message */}
       {message && (
         <p
-          className={`mb-4 ${message.includes("✅") ? "text-green-600" : "text-red-500"}`}
+          className={`mb-4 ${
+            message.includes("✅") ? "text-green-600" : "text-red-500"
+          }`}
           role="alert"
         >
           {message}
@@ -150,19 +140,12 @@ export default function AuthForm() {
         </form>
       )}
 
-      {/* Verification pending view */}
+      {/* Resend verification after signup */}
       {verificationSent && (
         <div className="flex flex-col items-center gap-4 mt-4">
           <p className="text-gray-700 text-center">
-            We sent a verification email to <strong>{email}</strong>. Please click the link in your email to confirm.
+            Didn't receive the email?
           </p>
-          <button
-            onClick={handleRefreshVerification}
-            disabled={loading}
-            className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
-          >
-            I Verified My Email
-          </button>
           <button
             onClick={handleResendVerification}
             disabled={loading}
@@ -183,4 +166,4 @@ export default function AuthForm() {
       </div>
     </div>
   );
-    }
+}
