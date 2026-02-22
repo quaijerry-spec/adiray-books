@@ -49,14 +49,16 @@ export const AuthProvider = ({ children }) => {
           console.error("Firestore error:", firestoreError);
         }
 
-        setUser({
-          uid: currentUser.uid,
-          email: currentUser.email,
-          displayName: currentUser.displayName || "",
-          role,
-          emailVerified: currentUser.emailVerified,
-          provider: currentUser.providerData?.[0]?.providerId || null,
-        });
+        const tokenResult = await currentUser.getIdTokenResult();
+
+setUser({
+  uid: currentUser.uid,
+  email: currentUser.email,
+  displayName: currentUser.displayName || "",
+  role: tokenResult.claims.admin ? "admin" : "user",
+  emailVerified: currentUser.emailVerified,
+  provider: currentUser.providerData?.[0]?.providerId || null,
+});
 
       } catch (error) {
         console.error("Auth error:", error);
