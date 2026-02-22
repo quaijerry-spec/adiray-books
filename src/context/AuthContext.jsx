@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // 🔹 Auth state listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       try {
@@ -29,37 +30,35 @@ export const AuthProvider = ({ children }) => {
           return;
         }
 
+        const docRef = doc(db, "users", currentUser.uid);
+        const docSnap = await getDoc(docRef);
+
         let role = "user";
 
-        try {
-          const docRef = doc(db, "users", currentUser.uid);
-          const docSnap = await getDoc(docRef);
-
-          if (docSnap.exists()) {
-            role = docSnap.data().role || "user";
-          } else {
-            await setDoc(docRef, {
+        if (docSnap.exists()) {
+          role = docSnap.data().role || "user"; // preserve admin role
+        } else {
+          // first time user, create Firestore doc
+          await setDoc(
+            docRef,
+            {
               role: "user",
               email: currentUser.email,
               displayName: currentUser.displayName || "",
               createdAt: new Date(),
-            });
-          }
-        } catch (firestoreError) {
-          console.error("Firestore error:", firestoreError);
+            },
+            { merge: true }
+          );
         }
 
-        const tokenResult = await currentUser.getIdTokenResult();
-
-setUser({
-  uid: currentUser.uid,
-  email: currentUser.email,
-  displayName: currentUser.displayName || "",
-  role: tokenResult.claims.admin ? "admin" : "user",
-  emailVerified: currentUser.emailVerified,
-  provider: currentUser.providerData?.[0]?.providerId || null,
-});
-
+        setUser({
+          uid: currentUser.uid,
+          email: currentUser.email,
+          displayName: currentUser.displayName || "",
+          role,
+          emailVerified: currentUser.emailVerified,
+          provider: currentUser.providerData?.[0]?.providerId || null,
+        });
       } catch (error) {
         console.error("Auth error:", error);
         setUser(null);
@@ -71,19 +70,25 @@ setUser({
     return () => unsubscribe();
   }, []);
 
+  // 🔹 Signup (email/password)
   const signup = async (email, password) => {
     const cred = await createUserWithEmailAndPassword(auth, email, password);
 
     await sendEmailVerification(cred.user);
 
-    await setDoc(doc(db, "users", cred.user.uid), {
-      role: "user",
-      email: cred.user.email,
-      displayName: cred.user.displayName || "",
-      createdAt: new Date(),
-    });
+    await setDoc(
+      doc(db, "users", cred.user.uid),
+      {
+        role: "user",
+        email: cred.user.email,
+        displayName: cred.user.displayName || "",
+        createdAt: new Date(),
+      },
+      { merge: true }
+    );
   };
 
+  // 🔹 Login (email/password)
   const login = async (email, password) => {
     const cred = await signInWithEmailAndPassword(auth, email, password);
 
@@ -93,9 +98,28 @@ setUser({
     }
   };
 
+  // 🔹 Google login (safe, preserves role)
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    const result = await signInWithPopup(auth, provider);
+    const googleUser = result.user;
+
+    const docRef = doc(db, "users", googleUser.uid);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      await setDoc(
+        docRef,
+        {
+          role: "user", // default role for new Google user
+          email: googleUser.email,
+          displayName: googleUser.displayName || "",
+          createdAt: new Date(),
+        },
+        { merge: true } // ⚡ preserves any existing role (admin)
+      );
+    }
+    // ✅ do NOT set user manually; onAuthStateChanged updates state
   };
 
   const logout = async () => {
