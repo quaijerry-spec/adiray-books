@@ -1,5 +1,6 @@
+// src/App.jsx
 import { useState } from "react";
-import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 
 import Navbar from "./components/Navbar";
@@ -10,34 +11,10 @@ import Account from "./pages/Account";
 import Login from "./pages/Login";
 import Orders from "./pages/Orders";
 import AdminDashboard from "./pages/AdminDashboard";
-import VerifyEmail from "./pages/VerifyEmail"; // ✅ Email verification page
-import AdminUsers from "./pages/AdminUsers"; // ✅ Admin management page
+import AdminUsers from "./pages/AdminUsers"; // ✅ Admin users management page
+import VerifyEmail from "./pages/VerifyEmail"; // ✅ Verify email page
 import { CartProvider } from "./context/CartContext";
-import { useAuth } from "./context/AuthContext";
-
-// 🔹 ProtectedRoute for both regular and admin-only access
-function ProtectedRoute({ children, adminOnly = false }) {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    // Could add a spinner here if you want
-    return null;
-  }
-
-  if (!user) return <Navigate to="/login" replace />;
-
-  // Block unverified users (except Google users)
-  if (user.provider !== "google.com" && !user.emailVerified) {
-    return <Navigate to="/verify" replace />;
-  }
-
-  // Admin-only protection
-  if (adminOnly && user.role !== "admin") {
-    return <Navigate to="/account" replace />;
-  }
-
-  return children;
-}
+import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function App() {
   const [search, setSearch] = useState("");
@@ -56,13 +33,14 @@ export default function App() {
           transition={{ duration: 0.4 }}
         >
           <Routes location={location} key={location.pathname}>
-            {/* Public Routes */}
             <Route path="/" element={<Home search={search} />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/login" element={<Login />} />
+
+            {/* 🔹 Verify email route */}
             <Route path="/verify" element={<VerifyEmail />} />
 
-            {/* Protected Routes */}
+            {/* 🔹 Protected pages */}
             <Route
               path="/account"
               element={
@@ -79,8 +57,6 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
-
-            {/* Admin-only Routes */}
             <Route
               path="/admin"
               element={
