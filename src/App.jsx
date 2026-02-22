@@ -10,14 +10,26 @@ import Account from "./pages/Account";
 import Login from "./pages/Login";
 import Orders from "./pages/Orders";
 import AdminDashboard from "./pages/AdminDashboard";
+import VerifyEmail from "./pages/VerifyEmail"; // ✅ ADD THIS
 import { CartProvider } from "./context/CartContext";
 import { useAuth } from "./context/AuthContext";
 
 function ProtectedRoute({ children, adminOnly = false }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
 
-  if (!user) return <Navigate to="/login" />;
-  if (adminOnly && user.role !== "admin") return <Navigate to="/account" />;
+  if (loading) return null;
+
+  if (!user) return <Navigate to="/login" replace />;
+
+  // 🔥 Block unverified users (except Google)
+  if (user.provider !== "google.com" && !user.emailVerified) {
+    return <Navigate to="/verify" replace />;
+  }
+
+  if (adminOnly && user.role !== "admin") {
+    return <Navigate to="/account" replace />;
+  }
+
   return children;
 }
 
@@ -41,6 +53,10 @@ export default function App() {
             <Route path="/" element={<Home search={search} />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/login" element={<Login />} />
+
+            {/* ✅ VERIFY ROUTE (NOT PROTECTED) */}
+            <Route path="/verify" element={<VerifyEmail />} />
+
             <Route
               path="/account"
               element={
@@ -49,6 +65,7 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/orders"
               element={
@@ -57,6 +74,7 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/admin"
               element={
