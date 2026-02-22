@@ -6,6 +6,7 @@ import { Navigate } from "react-router-dom";
 export default function ProtectedRoute({ children, adminOnly = false }) {
   const { user, loading } = useAuth();
 
+  // 🔹 Wait for auth state to load
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -14,20 +15,21 @@ export default function ProtectedRoute({ children, adminOnly = false }) {
     );
   }
 
-  // Not logged in
+  // 🔹 Not logged in
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
-  // 🔥 HARD BLOCK unverified users (except Google)
+  // 🔹 Block unverified email/password users
   if (user.provider !== "google.com" && !user.emailVerified) {
     return <Navigate to="/verify" replace />;
   }
 
-  // Admin-only check
+  // 🔹 Admin-only routes
   if (adminOnly && user.role !== "admin") {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/account" replace />;
   }
 
+  // 🔹 All good, allow access
   return children;
 }
