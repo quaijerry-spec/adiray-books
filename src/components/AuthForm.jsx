@@ -12,7 +12,6 @@ export default function AuthForm() {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [verificationSent, setVerificationSent] = useState(false);
 
   // 🔹 Handle email/password submit
   const handleSubmit = async (e) => {
@@ -24,18 +23,20 @@ export default function AuthForm() {
       if (mode === "login") {
         await login(email, password);
         setMessage("✅ Login successful!");
+
+        // Navigate after login
+        navigate("/account");
       } else if (mode === "signup") {
         await signup(email, password);
-        setVerificationSent(true);
         setMessage(
-          "✅ Account created! A verification email has been sent."
+          "✅ Account created! Please check your email for verification."
         );
 
-        // 🔹 Redirect immediately to verify page
-        navigate("/verify", { replace: true });
+        // Redirect to verify page
+        navigate("/verify");
       }
     } catch (err) {
-      setMessage("⚠️ " + err.message);
+      setMessage(err.message);
     } finally {
       setLoading(false);
     }
@@ -48,10 +49,11 @@ export default function AuthForm() {
     try {
       await loginWithGoogle();
       setMessage("✅ Login successful!");
-      // After Google login, redirect automatically
-      navigate("/account", { replace: true });
+
+      // Navigate automatically after Google login
+      navigate("/account");
     } catch (err) {
-      setMessage("⚠️ " + err.message);
+      setMessage(err.message);
     } finally {
       setLoading(false);
     }
@@ -65,7 +67,7 @@ export default function AuthForm() {
       await resendVerification();
       setMessage("✅ Verification email sent again!");
     } catch (err) {
-      setMessage("⚠️ " + err.message);
+      setMessage(err.message);
     } finally {
       setLoading(false);
     }
@@ -75,7 +77,6 @@ export default function AuthForm() {
   const toggleMode = (newMode) => {
     setMode(newMode);
     setMessage("");
-    setVerificationSent(false);
     setEmail("");
     setPassword("");
   };
@@ -92,7 +93,6 @@ export default function AuthForm() {
           className={`mb-4 ${
             message.includes("✅") ? "text-green-600" : "text-red-500"
           }`}
-          role="alert"
         >
           {message}
         </p>
@@ -110,51 +110,33 @@ export default function AuthForm() {
       )}
 
       {/* Email/password form */}
-      {!verificationSent && (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            required
-            onChange={(e) => setEmail(e.target.value)}
-            className="px-4 py-2 rounded-full border focus:ring-2 focus:ring-orange-400"
-            aria-label="Email"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            required
-            onChange={(e) => setPassword(e.target.value)}
-            className="px-4 py-2 rounded-full border focus:ring-2 focus:ring-orange-400"
-            aria-label="Password"
-          />
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition"
-          >
-            {mode === "login" ? "Login" : "Sign Up"}
-          </button>
-        </form>
-      )}
-
-      {/* Resend verification after signup */}
-      {verificationSent && (
-        <div className="flex flex-col items-center gap-4 mt-4">
-          <p className="text-gray-700 text-center">
-            Didn't receive the email?
-          </p>
-          <button
-            onClick={handleResendVerification}
-            disabled={loading}
-            className="px-6 py-3 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition"
-          >
-            Resend Verification Email
-          </button>
-        </div>
-      )}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          required
+          onChange={(e) => setEmail(e.target.value)}
+          className="px-4 py-2 rounded-full border focus:ring-2 focus:ring-orange-400"
+          aria-label="Email"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          required
+          onChange={(e) => setPassword(e.target.value)}
+          className="px-4 py-2 rounded-full border focus:ring-2 focus:ring-orange-400"
+          aria-label="Password"
+        />
+        <button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-orange-500 text-white py-3 rounded-full hover:bg-orange-600 transition"
+        >
+          {mode === "login" ? "Login" : "Sign Up"}
+        </button>
+      </form>
 
       {/* Toggle login/signup */}
       <div className="flex justify-between mt-4 text-sm text-gray-600">
@@ -166,4 +148,4 @@ export default function AuthForm() {
       </div>
     </div>
   );
-}
+    }
