@@ -10,22 +10,28 @@ import Account from "./pages/Account";
 import Login from "./pages/Login";
 import Orders from "./pages/Orders";
 import AdminDashboard from "./pages/AdminDashboard";
-import VerifyEmail from "./pages/VerifyEmail"; // ✅ ADD THIS
+import VerifyEmail from "./pages/VerifyEmail"; // ✅ Email verification page
+import AdminUsers from "./pages/AdminUsers"; // ✅ Admin management page
 import { CartProvider } from "./context/CartContext";
 import { useAuth } from "./context/AuthContext";
 
+// 🔹 ProtectedRoute for both regular and admin-only access
 function ProtectedRoute({ children, adminOnly = false }) {
   const { user, loading } = useAuth();
 
-  if (loading) return null;
+  if (loading) {
+    // Could add a spinner here if you want
+    return null;
+  }
 
   if (!user) return <Navigate to="/login" replace />;
 
-  // 🔥 Block unverified users (except Google)
+  // Block unverified users (except Google users)
   if (user.provider !== "google.com" && !user.emailVerified) {
     return <Navigate to="/verify" replace />;
   }
 
+  // Admin-only protection
   if (adminOnly && user.role !== "admin") {
     return <Navigate to="/account" replace />;
   }
@@ -50,13 +56,13 @@ export default function App() {
           transition={{ duration: 0.4 }}
         >
           <Routes location={location} key={location.pathname}>
+            {/* Public Routes */}
             <Route path="/" element={<Home search={search} />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/login" element={<Login />} />
-
-            {/* ✅ VERIFY ROUTE (NOT PROTECTED) */}
             <Route path="/verify" element={<VerifyEmail />} />
 
+            {/* Protected Routes */}
             <Route
               path="/account"
               element={
@@ -65,7 +71,6 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
-
             <Route
               path="/orders"
               element={
@@ -75,11 +80,20 @@ export default function App() {
               }
             />
 
+            {/* Admin-only Routes */}
             <Route
               path="/admin"
               element={
                 <ProtectedRoute adminOnly={true}>
                   <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute adminOnly={true}>
+                  <AdminUsers />
                 </ProtectedRoute>
               }
             />
