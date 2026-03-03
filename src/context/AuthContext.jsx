@@ -1,31 +1,50 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { auth, googleProvider } from "../firebase";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  signInWithPopup,
+} from "firebase/auth";
 
 const AuthContext = createContext();
 
-export function AuthProvider({ children }) {
+export const useAuth = () => useContext(AuthContext);
+
+export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const savedUser = localStorage.getItem("adiray_user");
-    if (savedUser) setUser(JSON.parse(savedUser));
+    const unsubscribe = auth.onAuthStateChanged((u) => {
+      setUser(u);
+      setLoading(false);
+    });
+    return unsubscribe;
   }, []);
 
-  const login = (email) => {
-    const userData = { email, role: email === "admin@adiray.com" ? "admin" : "user" };
-    localStorage.setItem("adiray_user", JSON.stringify(userData));
-    setUser(userData);
+  // Email/Password Sign Up with verification
+  const signup = async (email, password) => {
+    const res = await createUserWithEmailAndPassword(auth, email, password);
+    await sendEmailVerification(res.user);
+    return res;
   };
 
-  const logout = () => {
-    localStorage.removeItem("adiray_user");
-    setUser(null);
-  };
+  const login = (email, password) => signInWithEmailAndPassword(auth, email, password);
+
+  const logout = () => signOut(auth);
+
+  const resetPassword = (email) => sendPasswordResetEmail(auth, email);
+
+  const loginWithGoogle = () => signInWithPopup(auth, googleProvider);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, loading, signup, login, logout, resetPassword, loginWithGoogle }}
+    >
       {children}
     </AuthContext.Provider>
   );
-}
-
-export const useAuth = () => useContext(AuthContext);
+};
