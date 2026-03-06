@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { loginUser, googleLogin } from "../services/authService";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -8,24 +9,21 @@ export default function Login() {
   const { login, loginWithGoogle, resetPassword } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      await login(email, password);
-      navigate("/");
-    } catch (err) {
-      alert(err.message);
-    }
-  };
+  const handleLogin = async () => {
+  try {
+    await loginUser(email, password);
+  } catch (error) {
+    alert(error.message);
+  }
+};
 
-  const handleGoogle = async () => {
-    try {
-      await loginWithGoogle();
-      navigate("/");
-    } catch (err) {
-      alert(err.message);
-    }
-  };
+const handleGoogleLogin = async () => {
+  try {
+    await googleLogin();
+  } catch (error) {
+    alert(error.message);
+  }
+};
 
   const handleResetPassword = async () => {
     if (!email) return alert("Enter your email first.");
